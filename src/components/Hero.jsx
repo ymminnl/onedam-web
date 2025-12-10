@@ -44,7 +44,6 @@ function Hero({ onToggleBackgroundBlur, serverName, heroLinks }) {
                   href={link.url}
                   target={isExternal ? "_blank" : "_self"}
                   rel={isExternal ? "noopener noreferrer" : ""}
-                  // CAMBIOS AQUÍ: Agregado 'min-w-[160px]' y 'justify-center'
                   className="group flex items-center justify-center gap-3 px-6 py-3 min-w-[160px] bg-hytale-blue/80 hover:bg-gaming-surface border border-hytale-gold/30 hover:border-hytale-gold text-hytale-text hover:text-hytale-gold rounded-lg transition-all duration-300 backdrop-blur-sm shadow-lg"
                 >
                   {IconComponent && <IconComponent className="w-5 h-5 group-hover:drop-shadow-[0_0_5px_rgba(205,176,117,0.8)] transition-all" />}

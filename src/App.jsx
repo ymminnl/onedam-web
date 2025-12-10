@@ -4,9 +4,11 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import NewsGrid from './components/NewsGrid';
 import NewsDetail from './components/NewsDetail';
+import Wiki from './components/Wiki';
 import ConnectModal from './components/ConnectModal';
-import StarBackground from './components/StarBackground';
+import Footer from './components/Footer'; // 1. IMPORTAR FOOTER
 import serverInfo from './data/server-info';
+import StarBackground from './components/StarBackground';
 
 function App() {
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
@@ -16,7 +18,9 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col relative bg-gaming-bg">
-      <div className="absolute inset-0 bg-gradient-gaming opacity-50 z-0 pointer-events-none"></div>
+      
+      <div className="fixed inset-0 bg-gradient-gaming opacity-50 z-0 pointer-events-none"></div>
+      
       <StarBackground />
 
       <Navbar onOpenModal={handleOpenModal} />
@@ -34,11 +38,13 @@ function App() {
             </>
           } />
 
-
           <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/wiki" element={<Wiki />} />
         </Routes>
       </main>
       
+      {/* 2. AÑADIR FOOTER AQUÍ (Justo antes de cerrar el div principal) */}
+      <Footer /> 
 
       {isBackgroundBlurred && (
         <div 
