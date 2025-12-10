@@ -113,11 +113,6 @@ function Navbar({ onOpenModal }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            // CAMBIO CRÍTICO:
-            // 1. 'fixed': Posición fija relativa a la pantalla (igual que el modal).
-            // 2. 'top-[73px]': Empieza justo debajo de la barra (calculado a ojo, p-4 + texto).
-            // 3. 'bg-black/60': Transparencia media para que el desenfoque tenga con qué trabajar.
-            // 4. 'backdrop-blur-md': El mismo nivel de desenfoque que tu modal.
             className="md:hidden fixed top-[73px] left-0 w-full h-[calc(100vh-73px)] bg-black/60 backdrop-blur-md border-t border-white/10 p-6 shadow-2xl flex flex-col items-center space-y-3 z-[99]"
           >
             {navbarLinks.map((link) => renderLink(link, true))}
