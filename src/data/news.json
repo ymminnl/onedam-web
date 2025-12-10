@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "¡Bienvenido a nuestro Servidor de Minecraft!",
+    "date": "10 de Diciembre, 2025",
+    "image": "/images/news-default-1.jpg",
+    "excerpt": "Estamos emocionados de anunciar la apertura de nuestro nuevo servidor. ¡Prepárate para aventuras épicas y una comunidad increíble!",
+    "content": "¡Hola a todos! Estamos emocionados de lanzar nuestro servidor de Minecraft. Hemos trabajado duro para crear una experiencia única con mods personalizados, eventos y una comunidad acogedora. ¡Únete a nosotros hoy y comienza tu aventura!"
+  },
+  {
+    "id": 2,
+    "title": "Evento Semanal: Construcción Creativa",
+    "date": "12 de Diciembre, 2025",
+    "image": "/images/news-default-2.jpg",
+    "excerpt": "Participa en nuestro primer evento de construcción creativa. ¡Demuestra tus habilidades y gana recompensas increíbles!",
+    "content": "Este sábado a las 18:00 (hora del servidor) tendremos nuestro primer evento de construcción. El tema será 'Ciudades Flotantes'. ¡Prepara tus bloques y tu imaginación!"
+  }
+]

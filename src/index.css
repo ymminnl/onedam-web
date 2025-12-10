@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: var(--tw-gaming-bg); /* Fondo sólido oscuro */
+
+  @apply text-hytale-text; /* Restaurar color de texto general */
+}
+
+/* Custom Scrollbar for that gaming feel */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0e1826; 
+}
+::-webkit-scrollbar-thumb {
+  background: #334155; 
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cdb075; 
+}
+
+
+
+
+
+
+
+/* Reglas agresivas para eliminar bordes/contornos problemáticos */
+
+
+
+a, button {
+
+
+
+  outline: none !important;
+
+
+
+  box-shadow: none !important;
+
+
+
+  border-color: transparent !important; /* Asegurar que no haya border-color blanco */
+
+
+
+}
+
+
+
+
+
+
+
+a:focus, button:focus {
+
+
+
+  outline: none !important;
+
+
+
+  box-shadow: none !important;
+
+
+
+  border-color: transparent !important;
+
+
+
+}
