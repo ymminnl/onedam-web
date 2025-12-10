@@ -3,61 +3,32 @@
 @tailwind utilities;
 
 body {
-  background-color: var(--tw-gaming-bg); /* Fondo sólido oscuro */
+  background-color: var(--tw-gaming-bg);
 
-  @apply text-hytale-text; /* Restaurar color de texto general */
+  @apply text-hytale-text;
 }
 
-/* Custom Scrollbar for that gaming feel */
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0e1826; 
+  background: #0e1826;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #334155; 
+  background: #334155;
   border-radius: 5px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #cdb075; 
+  background: #cdb075;
 }
 
 
 
-
-
-
-
-/* Reglas agresivas para eliminar bordes/contornos problemáticos */
-
-
-
-a, button {
-
-
-
-  outline: none !important;
-
-
-
-  box-shadow: none !important;
-
-
-
-  border-color: transparent !important; /* Asegurar que no haya border-color blanco */
-
-
-
-}
-
-
-
-
-
-
-
-a:focus, button:focus {
+a,
+button {
 
 
 
@@ -73,4 +44,115 @@ a:focus, button:focus {
 
 
 
+}
+
+
+
+
+
+
+
+a:focus,
+button:focus {
+
+
+
+  outline: none !important;
+
+
+
+  box-shadow: none !important;
+
+
+
+  border-color: transparent !important;
+
+
+
+}
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+}
+
+.star-falling {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+}
+
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+}
+
+.star-falling {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@keyframes shoot {
+  0% {
+    transform: rotate(45deg) translateX(0); 
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(45deg) translateX(200vmax); 
+    opacity: 0;
+  }
+}
+
+.star-shooting {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,1), rgba(255,255,255,0));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+  
+  animation-name: shoot;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  z-index: 0;
 }

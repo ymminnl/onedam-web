@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom'; // Usar Link en lugar de a href
+import { Link } from 'react-router-dom';
 import serverInfo from '../data/server-info';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ExternalLink, Home, Newspaper, ShoppingCart, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Aceptamos la prop onOpenModal
+const NavIcons = {
+  Home: Home,
+  Newspaper: Newspaper,
+  ShoppingCart: ShoppingCart,
+  MessageSquare: MessageSquare
+};
+
 function Navbar({ onOpenModal }) {
   const { logoText, navbarLinks } = serverInfo;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,30 +30,67 @@ function Navbar({ onOpenModal }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobileMenuOpen]);
 
+  const renderLink = (link, isMobile = false) => {
+    const isExternal = link.url.startsWith('http');
+    const IconComponent = NavIcons[link.icon]; 
+    
+    // Botones con estilo 'glass'
+    const baseClasses = isMobile 
+      ? "text-lg font-bold font-serif uppercase tracking-widest text-hytale-text w-full text-center py-4 flex items-center justify-center gap-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-hytale-gold hover:text-hytale-gold transition-all duration-200 active:scale-95 shadow-sm"
+      : "text-lg font-sans hover:text-hytale-gold-hover transition-colors relative group flex items-center gap-1";
+
+    const content = (
+      <>
+        {isMobile && IconComponent && <IconComponent size={20} />}
+        {link.name}
+        {isExternal && (
+          <ExternalLink size={16} className="opacity-70 group-hover:opacity-100" /> 
+        )}
+        {!isMobile && <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-hytale-gold transition-all group-hover:w-full"></span>}
+      </>
+    );
+
+    if (isExternal) {
+      return (
+        <a
+          key={link.name}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={baseClasses}
+          onClick={() => isMobile && setIsMobileMenuOpen(false)}
+        >
+          {content}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        key={link.name}
+        to={link.url}
+        className={baseClasses}
+        onClick={() => isMobile && setIsMobileMenuOpen(false)}
+      >
+        {content}
+      </Link>
+    );
+  };
+
   return (
-    <nav className="bg-hytale-blue/95 backdrop-blur-sm text-hytale-text p-4 shadow-lg sticky top-0 z-50 border-b border-hytale-gold/10">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-serif text-hytale-gold hover:text-hytale-gold-hover transition-colors z-50 drop-shadow-sm">
+    // Barra de navegación: Usamos sticky y un z-index muy alto
+    <nav className="bg-black/60 backdrop-blur-md text-hytale-text p-4 shadow-2xl sticky top-0 z-[100] border-b border-white/10 transition-all duration-300">
+      <div className="container mx-auto flex justify-between items-center relative z-[101]">
+        <Link to="/" className="text-2xl font-serif text-hytale-gold hover:text-hytale-gold-hover transition-colors drop-shadow-sm">
           {logoText}
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex space-x-6">
-          {navbarLinks.map((link) => (
-            <Link // Usamos Link de react-router
-              key={link.name}
-              to={link.url}
-              className="text-lg font-sans hover:text-hytale-gold-hover transition-colors relative group"
-            >
-              {link.name}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-hytale-gold transition-all group-hover:w-full"></span>
-            </Link>
-          ))}
+        <div className="hidden md:flex space-x-6 items-center">
+          {navbarLinks.map((link) => renderLink(link, false))}
         </div>
 
-        {/* Botón Acción Desktop */}
         <div className="hidden md:block">
-          <button // Cambiado de <a> a <button>
+          <button
             onClick={onOpenModal}
             className="bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-2 px-5 rounded-md transition-all transform hover:scale-105 shadow-md"
           >
@@ -55,15 +98,13 @@ function Navbar({ onOpenModal }) {
           </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <div className="md:hidden z-50">
-          <button ref={toggleButtonRef} onClick={toggleMobileMenu} className="text-hytale-text text-2xl p-2">
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        <div className="md:hidden">
+          <button ref={toggleButtonRef} onClick={toggleMobileMenu} className="text-hytale-text text-2xl p-2 active:text-hytale-gold transition-colors">
+            {isMobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -72,27 +113,14 @@ function Navbar({ onOpenModal }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden absolute top-full left-0 w-full bg-hytale-blue border-b border-hytale-gold/20 p-4 shadow-xl flex flex-col items-center space-y-4"
+            // CAMBIO CRÍTICO:
+            // 1. 'fixed': Posición fija relativa a la pantalla (igual que el modal).
+            // 2. 'top-[73px]': Empieza justo debajo de la barra (calculado a ojo, p-4 + texto).
+            // 3. 'bg-black/60': Transparencia media para que el desenfoque tenga con qué trabajar.
+            // 4. 'backdrop-blur-md': El mismo nivel de desenfoque que tu modal.
+            className="md:hidden fixed top-[73px] left-0 w-full h-[calc(100vh-73px)] bg-black/60 backdrop-blur-md border-t border-white/10 p-6 shadow-2xl flex flex-col items-center space-y-3 z-[99]"
           >
-            {navbarLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.url}
-                className="text-xl font-sans text-hytale-text hover:text-hytale-gold-hover transition-colors w-full text-center py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <button
-              onClick={() => {
-                onOpenModal();
-                setIsMobileMenuOpen(false);
-              }}
-              className="bg-hytale-gold text-hytale-dark font-bold py-3 px-8 rounded-md w-full mt-2"
-            >
-              Unirse Ahora
-            </button>
+            {navbarLinks.map((link) => renderLink(link, true))}
           </motion.div>
         )}
       </AnimatePresence>

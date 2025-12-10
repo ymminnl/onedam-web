@@ -21,10 +21,11 @@ const serverInfo = {
     }
   ],
   "navbarLinks": [
-    {"name": "Inicio", "url": "/"},
-    {"name": "Noticias", "url": "/"}, 
-    {"name": "Tienda", "url": "https://tienda.onedam.net"},
-    {"name": "Discord", "url": "https://discord.gg/Onedam"}
+    // Agregamos la propiedad "icon" a cada enlace
+    {"name": "Inicio", "url": "/", "icon": "Home"},
+    {"name": "Noticias", "url": "/", "icon": "Newspaper"}, 
+    {"name": "Tienda", "url": "https://tienda.onedam.net", "icon": "ShoppingCart"},
+    {"name": "Discord", "url": "https://discord.gg/Onedam", "icon": "MessageSquare"}
   ],
   "heroLinks": [
     {"id": "store", "name": "Tienda", "url": "https://tienda.onedam.net", "icon": "ShoppingCart"},
