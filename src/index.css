@@ -156,3 +156,36 @@ button:focus {
   will-change: transform, opacity;
   z-index: 0;
 }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star-twinkle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation-name: twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: opacity, transform;
+}
+
+/* Movimiento flotante para las nebulosas */
+@keyframes float-nebula {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.nebula-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px); /* Desenfoque extremo para parecer gas */
+  opacity: 0.4; /* Sutil */
+  animation: float-nebula 20s infinite ease-in-out;
+  z-index: -1; /* Detrás de las estrellas */
+  pointer-events: none;
+}
