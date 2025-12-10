@@ -17,7 +17,7 @@ const StarBackground = () => {
 
   // --- GRUPO 1: Estrellas de Relleno ---
   const twinklingStars = useMemo(() => {
-    return Array.from({ length: 80 }).map((_, i) => ({
+    return Array.from({ length: 40 }).map((_, i) => ({ // Reducido de 80 a 40 para rendimiento
       id: `twinkle-${i}`,
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
@@ -29,7 +29,7 @@ const StarBackground = () => {
 
   // --- GRUPO 2: Estrellas que caen ---
   const fallingStars = useMemo(() => {
-    return Array.from({ length: 40 }).map((_, i) => ({
+    return Array.from({ length: 15 }).map((_, i) => ({ // Reducido de 40 a 15
       id: `fall-${i}`,
       left: `${Math.random() * 100}%`,
       size: `${Math.random() * 2 + 1}px`,
@@ -57,7 +57,7 @@ const StarBackground = () => {
       {nebulas.map((nebula, i) => (
         <div
           key={`nebula-${i}`}
-          className={`nebula-glow absolute ${nebula.color} ${nebula.size} ${nebula.opacity || 'opacity-30'}`}
+          className={`nebula-glow absolute ${nebula.color} ${nebula.size} ${nebula.opacity || 'opacity-30'} will-change-transform`} // Optimización GPU
           style={{
             top: nebula.top,
             left: nebula.left,

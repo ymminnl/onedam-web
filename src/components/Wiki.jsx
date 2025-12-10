@@ -69,14 +69,15 @@ const headerVariants = {
 
 // 4. Detalle de Tarjeta (Transición Cinemática tipo Página)
 const pageTransitionVariants = {
-  hidden: { opacity: 0, filter: 'blur(15px)' },
+  hidden: { opacity: 0, y: 10 }, // Solo opacidad y un ligero movimiento vertical
   visible: { 
-    opacity: 1, filter: 'blur(0px)',
-    transition: { duration: 0.5, ease: "easeInOut" }
+    opacity: 1, y: 0,
+    filter: 'blur(0px)', // Forzamos 0 por si acaso
+    transition: { duration: 0.4, ease: "easeOut" }
   },
   exit: { 
-    opacity: 0, filter: 'blur(15px)',
-    transition: { duration: 0.3, ease: "easeInOut" }
+    opacity: 0, y: -10, // Salida suave hacia arriba
+    transition: { duration: 0.3, ease: "easeIn" }
   }
 };
 
