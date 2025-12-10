@@ -1,35 +1,35 @@
 const serverInfo = {
   "serverName": "Onedam",
   "serverIp": "onedam.net",
-  "discordLink": "https://discord.gg/Onedam",
+  "heroDescription": "Servidor de Minecraft Español y Mucho más",
+  "footerDescription": "El mejor lugar para jugar con amigos y disfrutar de una experiencia única.",
+  "discordLink": "https://discord.gg/SZxYKb8GPJ",
   "storeLink": "https://tienda.onedam.net",
   "socials": [
     {
       "name": "Discord",
       "icon": "discord",
-      "url": "https://discord.gg/Onedam"
+      "url": "https://discord.gg/SZxYKb8GPJ"
     },
     {
-      "name": "YouTube",
-      "icon": "youtube",
-      "url": "https://youtube.com/Onedam"
+      "name": "TikTok",
+      "icon": "tiktok",
+      "url": "https://discord.gg/SZxYKb8GPJ"
     },
     {
-      "name": "Twitter",
-      "icon": "twitter",
-      "url": "https://twitter.com/Onedam"
+      "name": "Instagram",
+      "icon": "instagram",
+      "url": "https://discord.gg/SZxYKb8GPJ"
     }
   ],
   "navbarLinks": [
     { "name": "Inicio", "url": "/", "icon": "Home" },
     { "name": "Noticias", "url": "/news", "icon": "Newspaper" },
-    { "name": "Wiki", "url": "/wiki", "icon": "BookOpen" },
-    { "name": "Tienda", "url": "https://tienda.onedam.net", "icon": "ShoppingCart" },
-    { "name": "Discord", "url": "https://discord.gg/Onedam", "icon": "MessageSquare" }
+    { "name": "Wiki", "url": "/wiki", "icon": "BookOpen" }
   ],
   "heroLinks": [
     { "id": "store", "name": "Tienda", "url": "https://tienda.onedam.net", "icon": "ShoppingCart" },
-    { "id": "discord", "name": "Discord", "url": "https://discord.gg/Onedam", "icon": "MessageSquareText" },
+    { "id": "discord", "name": "Discord", "url": "https://discord.gg/SZxYKb8GPJ", "icon": "MessageSquareText" },
     { "id": "wiki", "name": "Wiki", "url": "/wiki", "icon": "BookOpen" },
   ],
   "logoText": "Onedam"

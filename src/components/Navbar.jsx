@@ -46,16 +46,17 @@ function Navbar({ onOpenModal }) {
     
     const baseClasses = isMobile 
       ? "text-lg font-bold font-serif uppercase tracking-widest text-hytale-text w-full text-center py-4 flex items-center justify-center gap-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-hytale-gold hover:text-hytale-gold transition-all duration-200 active:scale-95 shadow-sm"
-      : "text-lg font-sans hover:text-hytale-gold-hover transition-colors relative group flex items-center gap-1";
+      : "relative px-6 py-2 group rounded-md transition-all duration-200 hover:bg-hytale-gold/10 border border-transparent hover:border-hytale-gold/20";
 
     const content = (
       <>
-        {IconComponent && <IconComponent size={isMobile ? 20 : 18} />}
-        
-        {link.name}
-        
-        {isExternal && <ExternalLink size={16} className="opacity-70 group-hover:opacity-100" />}
-        {!isMobile && <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-hytale-gold transition-all group-hover:w-full"></span>}
+        <div className="relative flex items-center gap-2 z-10">
+           {IconComponent && <IconComponent size={isMobile ? 20 : 18} className={`text-hytale-gold/80 group-hover:text-hytale-gold transition-colors duration-200 ${!isMobile && "group-hover:scale-110"}`} />}
+           <span className={`font-serif font-bold uppercase tracking-widest text-sm text-hytale-text/90 group-hover:text-white transition-colors duration-200 ${!isMobile && "group-hover:drop-shadow-[0_0_5px_rgba(205,176,117,0.5)]"}`}>
+             {link.name}
+           </span>
+           {isExternal && <ExternalLink size={14} className="opacity-50 group-hover:opacity-100 text-hytale-gold" />}
+        </div>
       </>
     );
 
@@ -78,26 +79,23 @@ function Navbar({ onOpenModal }) {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-black/60 backdrop-blur-md text-hytale-text p-4 shadow-xl z-50 border-b border-white/10 transition-all duration-300">
-        <div className="container mx-auto flex justify-between items-center relative">
-          <Link to="/" className="text-2xl font-serif text-hytale-gold hover:text-hytale-gold-hover transition-colors drop-shadow-sm z-50">
-            {logoText}
+      <nav className="fixed top-0 left-0 right-0 h-20 z-50 transition-all duration-300 bg-[#0a0a0c]/90 backdrop-blur-md border-b border-white/5 shadow-xl">
+        
+        <div className="container mx-auto h-full flex justify-between items-center relative px-6">
+          
+          {/* Logo Area - Simplificado */}
+          <Link to="/" className="group relative z-50 flex items-center">
+             <span className="text-3xl font-serif font-bold tracking-[0.15em] bg-gradient-to-r from-hytale-gold via-yellow-200 to-hytale-gold bg-clip-text text-transparent drop-shadow-sm group-hover:drop-shadow-[0_0_10px_rgba(205,176,117,0.5)] transition-all duration-300">
+              {logoText.toUpperCase()}
+            </span>
           </Link>
 
-          <div className="hidden md:flex space-x-6 items-center">
+          {/* Center Navigation */}
+          <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center bg-black/40 px-2 py-1 rounded-full border border-white/5 shadow-inner">
             {navbarLinks.map((link) => renderLink(link, false))}
           </div>
 
-          <div className="hidden md:block">
-            <button
-              onClick={onOpenModal}
-              className="bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-2 px-5 rounded-md transition-all transform hover:scale-105 shadow-md"
-            >
-              Unirse Ahora
-            </button>
-          </div>
-
-          <div className="md:hidden z-50">
+          <div className="md:hidden z-50 ml-auto">
             <button ref={toggleButtonRef} onClick={toggleMobileMenu} className="text-hytale-text text-2xl p-2 active:text-hytale-gold transition-colors">
               {isMobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
             </button>
@@ -118,7 +116,6 @@ function Navbar({ onOpenModal }) {
           >
             <div className="w-full flex flex-col gap-4 items-center" onClick={(e) => e.stopPropagation()}>
                {navbarLinks
-                 .filter(link => link.name !== 'Tienda' && link.name !== 'Discord')
                  .map((link) => renderLink(link, true))
                }
             </div>

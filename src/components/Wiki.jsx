@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, AlertTriangle, AlertOctagon, Info, Clock, FileText } from 'lucide-react';
+import { Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, ArrowRight, AlertTriangle, AlertOctagon, Info, Clock, FileText } from 'lucide-react';
 import { wikiContent } from '../data/wiki-data';
 
 // --- CONFIGURACIÓN Y ESTILOS ---
@@ -20,9 +20,9 @@ const SeverityIcon = ({ severity }) => {
 };
 
 const getSeverityStyles = (severity) => {
-  if (severity === 'high') return "border-red-500/30 hover:border-red-500/60 bg-red-950/20";
-  if (severity === 'medium') return "border-orange-500/30 hover:border-orange-500/60 bg-orange-950/20";
-  return "border-blue-500/30 hover:border-blue-500/60 bg-blue-950/20";
+  if (severity === 'high') return "border-l-red-600 shadow-[inset_10px_0_20px_-10px_rgba(220,38,38,0.1)]"; // Rojo intenso
+  if (severity === 'medium') return "border-l-orange-500 shadow-[inset_10px_0_20px_-10px_rgba(249,115,22,0.1)]"; // Naranja
+  return "border-l-blue-500 shadow-[inset_10px_0_20px_-10px_rgba(59,130,246,0.1)]"; // Azul/Info
 };
 
 const generateId = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -45,12 +45,12 @@ const containerVariants = {
   }
 };
 
-// 2. Ítems subiendo suavemente (Estilo Inicio)
+// 2. Ítems apareciendo suavemente (Sin movimiento, solo Fade)
 const itemAppearVariants = {
-  hidden: { opacity: 0, y: 30 }, // Empieza 30px abajo
+  hidden: { opacity: 0 },
   visible: { 
-    opacity: 1, y: 0, 
-    transition: { duration: 0.5, ease: "easeOut" } // Sube lento (0.5s)
+    opacity: 1, 
+    transition: { duration: 0.5, ease: "easeOut" }
   }
 };
 
@@ -64,6 +64,19 @@ const headerVariants = {
   exit: { 
     opacity: 0, height: 0, overflow: 'hidden', 
     transition: { duration: 0.3 } 
+  }
+};
+
+// 4. Detalle de Tarjeta (Transición Cinemática tipo Página)
+const pageTransitionVariants = {
+  hidden: { opacity: 0, filter: 'blur(15px)' },
+  visible: { 
+    opacity: 1, filter: 'blur(0px)',
+    transition: { duration: 0.5, ease: "easeInOut" }
+  },
+  exit: { 
+    opacity: 0, filter: 'blur(15px)',
+    transition: { duration: 0.3, ease: "easeInOut" }
   }
 };
 
@@ -85,7 +98,18 @@ function Wiki() {
     setSearchTerm('');
   };
 
-  // Scroll automático
+  // Scroll al inicio al entrar a una categoría
+  useEffect(() => {
+    if (selectedCategory) {
+      // Usamos un timeout y scroll instantáneo para asegurar que funcione
+      // incluso si la altura de la página cambia drásticamente
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 10);
+    }
+  }, [selectedCategory]);
+
+  // Scroll automático a items específicos
   useEffect(() => {
     if (selectedCategory && targetItemId) {
       const timer = setTimeout(() => {
@@ -191,70 +215,90 @@ function Wiki() {
     </AnimatePresence>
   );
 
-  const renderDetail = () => (
+  const renderDetail = () => {
+    // Calcular índices para navegación
+    const currentIndex = wikiCategories.findIndex(c => c.id === selectedCategory);
+    const prevCat = currentIndex > 0 ? wikiCategories[currentIndex - 1] : null;
+    const nextCat = currentIndex < wikiCategories.length - 1 ? wikiCategories[currentIndex + 1] : null;
+
+    return (
     <motion.div
       key="detail"
-      initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
-      className="max-w-5xl mx-auto w-full"
+      variants={pageTransitionVariants}
+      initial="hidden" animate="visible" exit="exit"
+      className="max-w-5xl mx-auto w-full relative"
     >
       <button
         onClick={handleBack}
-        className="flex items-center text-hytale-gold hover:text-white mb-6 md:mb-8 transition-colors group px-3 py-2 rounded-lg hover:bg-white/5 text-sm md:text-base"
+        className="flex items-center text-hytale-gold hover:text-white mb-6 md:mb-8 transition-colors group px-3 py-2 rounded-lg hover:bg-white/5 text-sm md:text-base relative z-10"
       >
         <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
         Volver a Categorías
       </button>
 
       {activeContent ? (
-        <div>
+        <div className="relative z-10">
           <h2 className="text-3xl md:text-5xl font-serif text-hytale-gold mb-4 md:mb-6 drop-shadow-md text-center md:text-left break-words">
             {activeContent.title}
           </h2>
-          <p className="text-lg md:text-xl text-hytale-text/80 mb-8 md:mb-12 text-center md:text-left px-2">
+          <p className="text-lg md:text-xl text-hytale-text/80 mb-16 md:mb-24 text-center md:text-left px-2 max-w-3xl">
             {activeContent.description}
           </p>
 
-          <div className="space-y-8 md:space-y-12">
+          <div className="space-y-4">
             {activeContent.sections.map((section, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
               >
-                <div className="flex items-center gap-3 mb-4 md:mb-6 pb-2 border-b border-white/10">
-                  <section.icon className="text-hytale-gold w-6 h-6 md:w-7 md:h-7" />
-                  <h3 className="text-xl md:text-2xl font-bold text-hytale-text font-serif">{section.title}</h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* LISTA LIMPIA SIN CAJAS NI FONDOS PROPIOS */}
+                <div className="divide-y divide-white/5">
                   {section.items.map((item, i) => {
                     const itemId = generateId(item.name);
                     const isTarget = targetItemId === itemId;
+                    
+                    // Color del título
+                    let titleColor = "text-hytale-gold";
+                    if (item.severity === 'high') titleColor = "text-red-400";
+                    else if (item.severity === 'medium') titleColor = "text-orange-400";
+
                     return (
                       <div
                         key={i}
                         id={itemId}
-                        className={`p-4 md:p-5 rounded-xl border backdrop-blur-sm transition-all duration-300 
-                          ${getSeverityStyles(item.severity)}
-                          ${isTarget ? 'ring-2 ring-hytale-gold ring-offset-2 ring-offset-black scale-[1.02] shadow-[0_0_30px_rgba(205,176,117,0.3)]' : 'hover:-translate-y-1 hover:shadow-lg'}
+                        className={`group py-6 transition-all duration-500
+                          ${isTarget ? 'bg-hytale-gold/5 -mx-4 px-4 rounded-lg' : ''}
                         `}
                       >
-                        <div className="flex items-start justify-between gap-4 mb-3">
-                          <h4 className="text-base md:text-lg font-bold text-hytale-text">{item.name}</h4>
-                          {item.severity && <SeverityIcon severity={item.severity} />}
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-12">
+                            
+                                                          <div className="flex-1">
+                                                              <div className="flex items-center gap-3 mb-2">
+                                                                <h4 className={`text-lg md:text-xl font-serif font-bold tracking-wide ${titleColor}`}>
+                                                                    {item.name}
+                                                                </h4>
+                                                                {item.severity === 'high' && (
+                                                                  <span className="text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 tracking-wider">
+                                                                    Critico
+                                                                  </span>
+                                                                )}
+                                                              </div>
+                                                              
+                                                              <p className="text-hytale-text/80 text-sm md:text-base leading-relaxed font-sans">
+                                                                  {item.desc}
+                                                              </p>
+                                                          </div>
+                            {/* Sanción minimalista */}
+                            {item.sanction && (
+                                <div className="mt-2 md:mt-1 md:text-right min-w-[200px]">
+                                    <span className="block text-[10px] font-bold uppercase tracking-widest text-hytale-text/30 mb-1">Consecuencia</span>
+                                    <p className="text-sm font-mono text-red-300/90">
+                                        {item.sanction}
+                                    </p>
+                                </div>
+                            )}
                         </div>
-                        <p className="text-sm text-hytale-text/70 mb-4 leading-relaxed">
-                          {item.desc}
-                        </p>
-                        {item.sanction && (
-                          <div className="flex flex-wrap items-center gap-2 mt-auto">
-                            <span className="text-xs font-bold uppercase tracking-wider text-white/50">Sanción:</span>
-                            <span className="text-xs font-mono bg-black/40 px-2 py-1 rounded text-white border border-white/5">
-                              {item.sanction}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     );
                   })}
@@ -263,9 +307,42 @@ function Wiki() {
             ))}
           </div>
 
+          {/* Navegación entre Categorías */}
+          <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">
+            {prevCat ? (
+                <button 
+                    onClick={() => setSelectedCategory(prevCat.id)}
+                    className="flex items-center gap-4 text-left group w-full md:w-auto p-4 rounded-xl bg-black/20 hover:bg-white/5 border border-white/5 hover:border-hytale-gold/30 transition-all"
+                >
+                    <div className="p-2 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold/20 transition-colors">
+                      <ArrowLeft className="text-hytale-gold group-hover:-translate-x-1 transition-transform" size={20} />
+                    </div>
+                    <div>
+                        <span className="block text-xs text-hytale-text/50 uppercase tracking-wider mb-1">Anterior</span>
+                        <span className="text-lg font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{prevCat.title}</span>
+                    </div>
+                </button>
+            ) : <div />}
+
+            {nextCat ? (
+                <button 
+                    onClick={() => setSelectedCategory(nextCat.id)}
+                    className="flex items-center justify-end gap-4 text-right group w-full md:w-auto p-4 rounded-xl bg-black/20 hover:bg-white/5 border border-white/5 hover:border-hytale-gold/30 transition-all"
+                >
+                    <div>
+                        <span className="block text-xs text-hytale-text/50 uppercase tracking-wider mb-1">Siguiente</span>
+                        <span className="text-lg font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{nextCat.title}</span>
+                    </div>
+                    <div className="p-2 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold/20 transition-colors">
+                      <ArrowRight className="text-hytale-gold group-hover:translate-x-1 transition-transform" size={20} />
+                    </div>
+                </button>
+            ) : <div />}
+          </div>
+
           {activeContent.lastUpdated && (
-            <div className="mt-12 md:mt-20 pt-8 border-t border-white/10 text-center">
-              <p className="inline-flex items-center gap-2 text-hytale-text/40 text-xs md:text-sm font-mono bg-black/20 px-4 py-2 rounded-full border border-white/5">
+            <div className="mt-8 pt-4 text-center">
+              <p className="inline-flex items-center gap-2 text-hytale-text/40 text-xs md:text-sm font-mono px-4 py-2 rounded-full">
                 <Clock size={14} />
                 Actualizado: <span className="text-hytale-gold/60">{activeContent.lastUpdated}</span>
               </p>
@@ -280,6 +357,7 @@ function Wiki() {
       )}
     </motion.div>
   );
+  };
 
   const renderSearchResults = () => {
     if (searchResults.length === 0) {
@@ -374,6 +452,20 @@ function Wiki() {
 
   return (
     <section className="container mx-auto px-4 pt-36 pb-16 relative z-10 min-h-screen flex flex-col">
+      
+      {/* IMAGEN DE FONDO (Igual que en Home) */}
+      <div 
+        className="fixed inset-0 z-[-20] bg-cover bg-center" 
+        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+      ></div>
+      
+      {/* Overlay Oscuro Base (Igual que en Home: bg-black opacity-50) */}
+      <div className="fixed inset-0 z-[-15] bg-black/50 pointer-events-none"></div>
+
+      {/* FONDO DEGRADADO GLOBAL DE LA WIKI (Para lectura abajo) */}
+      {/* Empieza transparente (respeta el overlay base) y se va a negro sólido. Fixed para evitar overflow. */}
+      <div className="fixed inset-0 z-[-10] pointer-events-none bg-gradient-to-b from-transparent via-[#080a0f]/80 to-[#080a0f]"></div>
+
       {renderHeader()}
       <AnimatePresence mode="wait">
         {selectedCategory ? renderDetail() : (searchTerm ? renderSearchResults() : renderCategories())}

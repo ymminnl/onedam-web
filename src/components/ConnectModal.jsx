@@ -47,28 +47,30 @@ function ConnectModal({ onClose }) {
           <CloseIcon size={24} />
         </button>
 
-        <h2 className="text-3xl font-serif text-hytale-gold text-center mb-6 drop-shadow-lg">
+        <h2 className="text-3xl font-serif text-hytale-gold text-center mb-8 drop-shadow-lg">
           Conéctate a Nuestro Servidor
         </h2>
 
-        {/* IP Display and Copy Button - Ahora flotando directamente en el modal */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4"> {/* Eliminado bg, border, shadow */}
-          <div className="flex items-center justify-center w-full sm:w-auto">
-            <p className="text-hytale-gold text-base sm:text-lg font-bold mr-2 drop-shadow-sm">IP:</p>
-            <code className="text-xl sm:text-2xl md:text-3xl font-mono text-hytale-gold font-bold tracking-wide break-all drop-shadow-md">
+        <div className="flex flex-col items-center gap-6 w-full">
+          
+          {/* Contenedor de la IP */}
+          <div className="w-full bg-black/20 border border-white/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2">
+            <span className="text-hytale-text/70 text-sm font-sans uppercase tracking-widest">Dirección IP</span>
+            <code className="text-3xl md:text-4xl font-mono text-hytale-gold font-bold tracking-wide drop-shadow-[0_0_10px_rgba(205,176,117,0.3)]">
               {serverIp}
             </code>
           </div>
+
+          {/* Botón de copiar */}
           <button
             onClick={() => copyToClipboard(connectString, setCopyMessage)}
-            className="inline-flex items-center justify-center whitespace-nowrap text-base font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-gradient-button text-hytale-text border border-hytale-gold/20 hover:border-hytale-gold hover:bg-hytale-gold/10 hover:shadow-md transition-all duration-200 font-mono tracking-wider h-16 rounded-xl px-8 gap-2 w-full sm:w-auto drop-shadow-md active:translate-y-0.5 active:shadow-sm"
+            className="w-full bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg flex items-center justify-center gap-3"
           >
-            <CopyIcon className="w-5 h-5 drop-shadow-sm" />
-            <span className="drop-shadow-sm">{copyMessage}</span>
+            <CopyIcon className="w-5 h-5" />
+            <span className="text-lg font-serif uppercase tracking-wide">{copyMessage}</span>
           </button>
-        </div>
-        {/* Puedes añadir más información aquí si es necesario */}
 
+        </div>
       </motion.div>
     </AnimatePresence>
   );

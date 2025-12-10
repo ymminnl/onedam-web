@@ -4,25 +4,16 @@
 
 body {
   background-color: var(--tw-gaming-bg);
+  /* Ocultar barra de scroll para look inmersivo */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 
   @apply text-hytale-text;
 }
 
+/* Ocultar barra en Chrome/Safari/Opera */
 ::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0e1826;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #cdb075;
+  display: none;
 }
 
 
