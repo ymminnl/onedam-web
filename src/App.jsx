@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'; // 1. Asegúrate de importar useEffect
+import { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom'; 
-import { AnimatePresence, motion } from 'framer-motion'; 
+import { AnimatePresence } from 'framer-motion'; 
+
+// Componentes
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import NewsGrid from './components/NewsGrid';
@@ -9,31 +11,15 @@ import NewsPage from './components/NewsPage';
 import Wiki from './components/Wiki';
 import ConnectModal from './components/ConnectModal';
 import Footer from './components/Footer';
-import serverInfo from './data/server-info';
 import StarBackground from './components/StarBackground';
+import ScrollToTop from './components/ScrollToTop'; // [NUEVO]
+import PageWrapper from './components/PageWrapper'; // [NUEVO]
 
-const PageWrapper = ({ children }) => (
-  <motion.div
-    initial={{ opacity: 0, filter: 'blur(5px)' }} 
-    animate={{ opacity: 1, filter: 'blur(0px)' }} 
-    exit={{ opacity: 0, filter: 'blur(5px)' }}    
-    transition={{ duration: 0.3 }}
-  >
-    {children}
-  </motion.div>
-);
+import serverInfo from './data/server-info';
 
 function App() {
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
   const location = useLocation(); 
-  const { pathname } = location; // Obtenemos el pathname
-
-  // --- ESTO ES LO QUE FALTABA ---
-  // Cada vez que cambia la ruta (pathname), sube el scroll arriba
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  // -----------------------------
 
   const handleOpenModal = () => setIsBackgroundBlurred(true);
   const handleCloseModal = () => setIsBackgroundBlurred(false);
@@ -41,6 +27,9 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col relative bg-gaming-bg">
       
+      {/* Componente lógico para el scroll */}
+      <ScrollToTop />
+
       <div className="fixed inset-0 bg-gradient-gaming opacity-50 z-0 pointer-events-none"></div>
       
       <StarBackground />
