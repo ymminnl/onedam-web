@@ -24,7 +24,8 @@ function NewsGrid() {
   return (
     <section className="relative w-full bg-gaming-bg py-16 z-20">
       
-      <div className="absolute top-1 left- w-full h-32 -translate-y-full bg-gradient-to-b from-transparent to-gaming-bg pointer-events-none"></div>
+      {/* Degradado superior para fundir con las estrellas */}
+      <div className="absolute top-0 left-0 w-full h-32 -translate-y-full bg-gradient-to-b from-transparent to-gaming-bg pointer-events-none"></div>
 
       <div className="container mx-auto px-4">
         <motion.h2 
@@ -36,48 +37,65 @@ function NewsGrid() {
           Últimas Noticias
         </motion.h2>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {newsData.map((newsItem) => (
-            <motion.div
-              key={newsItem.id}
-              variants={itemVariants}
-              className="bg-hytale-blue rounded-lg shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-[0_0_20px_rgba(205,176,117,0.15)] hover:-translate-y-2 flex flex-col border border-white/5"
-            >
-              {newsItem.image && (
-                <div className="overflow-hidden h-48">
-                  <img
-                    src={newsItem.image}
-                    alt={newsItem.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                  />
+        {newsData.length > 0 ? (
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {newsData.map((newsItem) => (
+              <motion.div
+                key={newsItem.id}
+                variants={itemVariants}
+                className="bg-hytale-blue rounded-lg shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-[0_0_20px_rgba(205,176,117,0.15)] hover:-translate-y-2 flex flex-col border border-white/5"
+              >
+                {newsItem.image && (
+                  <div className="overflow-hidden h-48">
+                    <img
+                      src={newsItem.image}
+                      alt={newsItem.title}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                    />
+                  </div>
+                )}
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-serif text-hytale-gold mb-3 line-clamp-2">
+                    {newsItem.title}
+                  </h3>
+                  <p className="text-xs font-bold text-hytale-text/50 mb-4 uppercase tracking-wider">
+                    {newsItem.date}
+                  </p>
+                  <p className="text-hytale-text leading-relaxed flex-grow mb-6 line-clamp-3">
+                    {newsItem.excerpt}
+                  </p>
+                  <Link
+                    to={`/news/${newsItem.id}`}
+                    className="mt-auto inline-block text-center bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-2 px-5 rounded-md transition-colors shadow-sm"
+                  >
+                    Leer Más
+                  </Link>
                 </div>
-              )}
-              <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-2xl font-serif text-hytale-gold mb-3 line-clamp-2">
-                  {newsItem.title}
-                </h3>
-                <p className="text-xs font-bold text-hytale-text/50 mb-4 uppercase tracking-wider">
-                  {newsItem.date}
-                </p>
-                <p className="text-hytale-text leading-relaxed flex-grow mb-6 line-clamp-3">
-                  {newsItem.excerpt}
-                </p>
-                <Link
-                  to={`/news/${newsItem.id}`}
-                  className="mt-auto inline-block text-center bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-2 px-5 rounded-md transition-colors shadow-sm"
-                >
-                  Leer Más
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          /* CARTEL DE "EN CONSTRUCCIÓN" (Tu diseño) */
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center py-20 bg-black/20 rounded-xl border border-white/10 border-dashed"
+          >
+            <p className="text-2xl text-hytale-text/50 font-serif">
+              Contenido en construcción...
+            </p>
+            <p className="mt-2 text-hytale-text/30">
+              Pronto agregaremos información sobre noticias y eventos.
+            </p>
+          </motion.div>
+        )}
       </div>
     </section>
   );

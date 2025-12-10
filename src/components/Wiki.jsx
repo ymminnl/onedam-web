@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, AlertTriangle, AlertOctagon, Info, Swords, Clock } from 'lucide-react';
 import { wikiContent } from '../data/wiki-data';
 
-
 const pageVariants = {
   initial: {
     opacity: 0,
@@ -184,14 +183,15 @@ function Wiki() {
                     </motion.div>
                   ))}
                 </div>
+                
                 {activeContent.lastUpdated && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="mt-20 pt- text-center"
+                    className="mt-20 pt-8 border-t border-white/10 text-center"
                   >
-                    <p className="inline-flex items-center gap- text-hytale-text/40 text-sm font-mono px- py-">
+                    <p className="inline-flex items-center gap-2 text-hytale-text/40 text-sm font-mono bg-black/20 px-4 py-2 rounded-full border border-white/5">
                       <Clock size={14} />
                       Última actualización: <span className="text-hytale-gold/60">{activeContent.lastUpdated}</span>
                     </p>
