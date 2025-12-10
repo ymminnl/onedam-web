@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom'; // 1. IMPORTANTE: Importar useLocation
-import { AnimatePresence, motion } from 'framer-motion'; // 2. Importar AnimatePresence
+import React, { useState, useEffect } from 'react'; // 1. Asegúrate de importar useEffect
+import { Routes, Route, useLocation } from 'react-router-dom'; 
+import { AnimatePresence, motion } from 'framer-motion'; 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import NewsGrid from './components/NewsGrid';
@@ -12,13 +12,11 @@ import Footer from './components/Footer';
 import serverInfo from './data/server-info';
 import StarBackground from './components/StarBackground';
 
-// 3. Creamos un componente "Wrapper" para no repetir código
-// Este componente le dará el efecto de entrada/salida a CADA página
 const PageWrapper = ({ children }) => (
   <motion.div
-    initial={{ opacity: 0, filter: 'blur(5px)' }} // Empieza invisible y borroso
-    animate={{ opacity: 1, filter: 'blur(0px)' }} // Se enfoca y aparece
-    exit={{ opacity: 0, filter: 'blur(5px)' }}    // Se desenfoca y desaparece al salir
+    initial={{ opacity: 0, filter: 'blur(5px)' }} 
+    animate={{ opacity: 1, filter: 'blur(0px)' }} 
+    exit={{ opacity: 0, filter: 'blur(5px)' }}    
     transition={{ duration: 0.3 }}
   >
     {children}
@@ -27,7 +25,15 @@ const PageWrapper = ({ children }) => (
 
 function App() {
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
-  const location = useLocation(); // Hook para saber en qué ruta estamos
+  const location = useLocation(); 
+  const { pathname } = location; // Obtenemos el pathname
+
+  // --- ESTO ES LO QUE FALTABA ---
+  // Cada vez que cambia la ruta (pathname), sube el scroll arriba
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  // -----------------------------
 
   const handleOpenModal = () => setIsBackgroundBlurred(true);
   const handleCloseModal = () => setIsBackgroundBlurred(false);
@@ -42,9 +48,7 @@ function App() {
       <Navbar onOpenModal={handleOpenModal} />
 
       <main className="flex-grow z-10 relative">
-        {/* 4. AnimatePresence mode="wait": Espera a que la página vieja salga antes de meter la nueva */}
         <AnimatePresence mode="wait">
-          {/* Usamos location.pathname como 'key' para forzar la animación al cambiar de ruta */}
           <Routes location={location} key={location.pathname}>
             
             <Route path="/" element={
