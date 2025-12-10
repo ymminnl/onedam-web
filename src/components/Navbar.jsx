@@ -34,7 +34,6 @@ function Navbar({ onOpenModal }) {
     const isExternal = link.url.startsWith('http');
     const IconComponent = NavIcons[link.icon]; 
     
-    // Botones con estilo 'glass'
     const baseClasses = isMobile 
       ? "text-lg font-bold font-serif uppercase tracking-widest text-hytale-text w-full text-center py-4 flex items-center justify-center gap-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-hytale-gold hover:text-hytale-gold transition-all duration-200 active:scale-95 shadow-sm"
       : "text-lg font-sans hover:text-hytale-gold-hover transition-colors relative group flex items-center gap-1";
@@ -78,7 +77,6 @@ function Navbar({ onOpenModal }) {
   };
 
   return (
-    // Barra de navegación: Usamos sticky y un z-index muy alto
     <nav className="bg-black/60 backdrop-blur-md text-hytale-text p-4 shadow-2xl sticky top-0 z-[100] border-b border-white/10 transition-all duration-300">
       <div className="container mx-auto flex justify-between items-center relative z-[101]">
         <Link to="/" className="text-2xl font-serif text-hytale-gold hover:text-hytale-gold-hover transition-colors drop-shadow-sm">
