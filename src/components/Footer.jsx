@@ -10,16 +10,13 @@ function Footer() {
   const location = useLocation();
   const isWiki = location.pathname === '/wiki';
 
-  // AJUSTE DE COLORES:
-  // "Más dureza" = Tonos ligeramente más claros/sólidos que el fondo para que la barra se defina mejor.
-  // Wiki: Fondo es #090914 -> Footer sube a #0c0c1c (Un toque más azulado/visible)
-  // Home: Fondo es #0a0c10 -> Footer sube a #0e1016 (Un toque más gris/sólido)
   const footerBgClass = isWiki 
     ? "bg-[#0c0c1c]/95 border-white/10" 
     : "bg-[#0e1016]/95 border-hytale-gold/10";
 
   return (
-    <footer className={`${footerBgClass} backdrop-blur-md border-t py-2 relative z-20 mt-auto transition-colors duration-500 snap-end`}>
+    // CAMBIO: 'snap-start' para que el imán lo atrape y no te rebote hacia arriba.
+    <footer className={`${footerBgClass} backdrop-blur-md border-t py-2 relative z-20 mt-auto transition-colors duration-500 snap-start`}>
       <div className="container mx-auto px-4 flex justify-center items-center">
         
         <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 text-center">
