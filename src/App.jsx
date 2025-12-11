@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom'; 
-import { AnimatePresence } from 'framer-motion'; 
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
-// Componentes
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import NewsGrid from './components/NewsGrid';
@@ -12,26 +11,25 @@ import Wiki from './components/Wiki';
 import ConnectModal from './components/ConnectModal';
 import Footer from './components/Footer';
 import StarBackground from './components/StarBackground';
-import ScrollToTop from './components/ScrollToTop'; // [NUEVO]
-import PageWrapper from './components/PageWrapper'; // [NUEVO]
+import ScrollToTop from './components/ScrollToTop';
+import PageWrapper from './components/PageWrapper';
 
 import serverInfo from './data/server-info';
 
 function App() {
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
-  const location = useLocation(); 
+  const location = useLocation();
 
   const handleOpenModal = () => setIsBackgroundBlurred(true);
   const handleCloseModal = () => setIsBackgroundBlurred(false);
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-gaming-bg">
-      
-      {/* Componente lógico para el scroll */}
+    <div className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth relative bg-gaming-bg">
+
       <ScrollToTop />
 
       <div className="fixed inset-0 bg-gradient-gaming opacity-50 z-0 pointer-events-none"></div>
-      
+
       <StarBackground />
 
       <Navbar onOpenModal={handleOpenModal} />
@@ -39,10 +37,10 @@ function App() {
       <main className="flex-grow z-10 relative">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            
+
             <Route path="/" element={
               <PageWrapper>
-                <Hero 
+                <Hero
                   onToggleBackgroundBlur={handleOpenModal}
                   serverName={serverInfo.serverName}
                   heroLinks={serverInfo.heroLinks}
@@ -56,13 +54,13 @@ function App() {
                 <NewsPage />
               </PageWrapper>
             } />
-            
+
             <Route path="/news/:id" element={
               <PageWrapper>
                 <NewsDetail />
               </PageWrapper>
             } />
-            
+
             <Route path="/wiki" element={
               <PageWrapper>
                 <Wiki />
@@ -72,11 +70,11 @@ function App() {
           </Routes>
         </AnimatePresence>
       </main>
-      
-      <Footer /> 
+
+      <Footer />
 
       {isBackgroundBlurred && (
-        <div 
+        <div
           className="fixed inset-0 z-[998] flex items-center justify-center backdrop-blur-md bg-black/60"
           onClick={handleCloseModal}
         >

@@ -22,7 +22,7 @@ const itemVariants = {
 
 function NewsGrid() {
   return (
-    <section className="relative w-full bg-gaming-bg py-16 z-20">
+    <section className="relative w-full bg-gaming-bg py-16 z-20 snap-start min-h-screen flex flex-col justify-center">
       
       {/* Degradado superior para fundir con las estrellas */}
       <div className="absolute top-0 left-0 w-full h-32 -translate-y-full bg-gradient-to-b from-transparent to-gaming-bg pointer-events-none"></div>

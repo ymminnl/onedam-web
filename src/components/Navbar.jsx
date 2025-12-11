@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import serverInfo from '../data/server-info';
 import { Menu, X, ExternalLink, Home, Newspaper, ShoppingCart, MessageSquare, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,11 +12,24 @@ const NavIcons = {
   BookOpen: BookOpen
 };
 
-function Navbar({ onOpenModal }) {
+function Navbar() {
   const { logoText, navbarLinks } = serverInfo;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const mobileMenuRef = useRef(null);
   const toggleButtonRef = useRef(null);
+  
+  const location = useLocation();
+  const isWiki = location.pathname === '/wiki';
+
+  // 1. Color de la Barra Superior (Desktop/Mobile Header)
+  const navBackgroundClass = isWiki 
+    ? "bg-[#121420]/90 border-white/10" 
+    : "bg-[#0a0a0c]/90 border-white/5";
+
+  // 2. Color del Menú Desplegable (Mobile Overlay) - [NUEVO AJUSTE]
+  const mobileMenuBgClass = isWiki
+    ? "bg-[#121420]/95" // Púrpura oscuro para la Wiki (Coherencia visual)
+    : "bg-black/80";    // Negro clásico para el resto
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -44,15 +57,23 @@ function Navbar({ onOpenModal }) {
     const isExternal = link.url.startsWith('http');
     const IconComponent = NavIcons[link.icon]; 
     
+    const isActive = location.pathname === link.url;
+
     const baseClasses = isMobile 
-      ? "text-lg font-bold font-serif uppercase tracking-widest text-hytale-text w-full text-center py-4 flex items-center justify-center gap-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-hytale-gold hover:text-hytale-gold transition-all duration-200 active:scale-95 shadow-sm"
-      : "relative px-6 py-2 group rounded-md transition-all duration-200 hover:bg-hytale-gold/10 border border-transparent hover:border-hytale-gold/20";
+      ? `text-lg font-bold font-serif uppercase tracking-widest w-full text-center py-4 flex items-center justify-center gap-4 border rounded-xl transition-all duration-200 active:scale-95 shadow-sm
+         ${isActive 
+           ? 'bg-hytale-gold/20 border-hytale-gold text-hytale-gold' 
+           : 'bg-white/5 border-white/10 text-hytale-text hover:bg-white/10 hover:border-hytale-gold hover:text-hytale-gold'}`
+      : `relative px-6 py-2 group rounded-md transition-all duration-200 border border-transparent
+         ${isActive 
+           ? 'bg-hytale-gold/10 text-white' 
+           : 'hover:bg-hytale-gold/10 hover:border-hytale-gold/20'}`;
 
     const content = (
       <>
         <div className="relative flex items-center gap-2 z-10">
-           {IconComponent && <IconComponent size={isMobile ? 20 : 18} className={`text-hytale-gold/80 group-hover:text-hytale-gold transition-colors duration-200 ${!isMobile && "group-hover:scale-110"}`} />}
-           <span className={`font-serif font-bold uppercase tracking-widest text-sm text-hytale-text/90 group-hover:text-white transition-colors duration-200 ${!isMobile && "group-hover:drop-shadow-[0_0_5px_rgba(205,176,117,0.5)]"}`}>
+           {IconComponent && <IconComponent size={isMobile ? 20 : 18} className={`transition-colors duration-200 ${isActive ? 'text-hytale-gold' : 'text-hytale-gold/80 group-hover:text-hytale-gold'} ${!isMobile && "group-hover:scale-110"}`} />}
+           <span className={`font-serif font-bold uppercase tracking-widest text-sm transition-colors duration-200 ${isActive ? 'text-white' : 'text-hytale-text/90 group-hover:text-white'} ${!isMobile && "group-hover:drop-shadow-[0_0_5px_rgba(205,176,117,0.5)]"}`}>
              {link.name}
            </span>
            {isExternal && <ExternalLink size={14} className="opacity-50 group-hover:opacity-100 text-hytale-gold" />}
@@ -79,18 +100,16 @@ function Navbar({ onOpenModal }) {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 h-20 z-50 transition-all duration-300 bg-[#0a0a0c]/90 backdrop-blur-md border-b border-white/5 shadow-xl">
+      <nav className={`fixed top-0 left-0 right-0 h-16 md:h-20 z-50 transition-colors duration-500 backdrop-blur-md shadow-xl border-b ${navBackgroundClass}`}>
         
         <div className="container mx-auto h-full flex justify-between items-center relative px-6">
           
-          {/* Logo Area - Simplificado */}
           <Link to="/" className="group relative z-50 flex items-center">
              <span className="text-3xl font-serif font-bold tracking-[0.15em] bg-gradient-to-r from-hytale-gold via-yellow-200 to-hytale-gold bg-clip-text text-transparent drop-shadow-sm group-hover:drop-shadow-[0_0_10px_rgba(205,176,117,0.5)] transition-all duration-300">
               {logoText.toUpperCase()}
             </span>
           </Link>
 
-          {/* Center Navigation */}
           <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center bg-black/40 px-2 py-1 rounded-full border border-white/5 shadow-inner">
             {navbarLinks.map((link) => renderLink(link, false))}
           </div>
@@ -112,12 +131,11 @@ function Navbar({ onOpenModal }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="md:hidden fixed inset-0 w-full h-full bg-black/60 backdrop-blur-md z-40 flex flex-col items-center justify-start pt-28 px-6 space-y-4 overflow-y-auto"
+            // APLICAMOS LA CLASE DINÁMICA AQUÍ: ${mobileMenuBgClass}
+            className={`md:hidden fixed inset-0 w-full h-full ${mobileMenuBgClass} backdrop-blur-md z-40 flex flex-col items-center justify-start pt-24 px-6 space-y-4 overflow-y-auto`}
           >
             <div className="w-full flex flex-col gap-4 items-center" onClick={(e) => e.stopPropagation()}>
-               {navbarLinks
-                 .map((link) => renderLink(link, true))
-               }
+               {navbarLinks.map((link) => renderLink(link, true))}
             </div>
           </motion.div>
         )}

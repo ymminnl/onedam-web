@@ -1,23 +1,17 @@
 import React, { useMemo } from 'react';
 
 // --- SISTEMAS ESTELARES (Decorativos) ---
-// Estrellas brillantes fijas para dar personalidad al cielo
 const DESTINATIONS = {
-  wiki: { x: 75, y: 30, color: 'bg-cyan-300', shadow: 'shadow-cyan-500' }, // Arriba derecha
-  news: { x: 20, y: 70, color: 'bg-purple-300', shadow: 'shadow-purple-500' }, // Abajo izquierda
+  wiki: { x: 75, y: 30, color: 'bg-cyan-300', shadow: 'shadow-cyan-500' },
+  news: { x: 20, y: 70, color: 'bg-purple-300', shadow: 'shadow-purple-500' },
 };
 
 const StarBackground = () => {
-  // --- GRUPO 0: Nebulosas (Atmósfera estática) ---
-  const nebulas = [
-    { color: 'bg-hytale-accent', top: '10%', left: '20%', size: 'w-96 h-96', delay: '0s' },
-    { color: 'bg-purple-900', top: '70%', left: '80%', size: 'w-80 h-80', delay: '-5s' },
-    { color: 'bg-hytale-gold', top: '40%', left: '50%', size: 'w-64 h-64', delay: '-10s', opacity: 'opacity-20' }, 
-  ];
+  // ELIMINADO: Grupo 0 (Nebulosas) - Ya no se usan.
 
-  // --- GRUPO 1: Estrellas de Relleno ---
+  // --- GRUPO 1: Estrellas de Relleno (Twinkling) ---
   const twinklingStars = useMemo(() => {
-    return Array.from({ length: 40 }).map((_, i) => ({ // Reducido de 80 a 40 para rendimiento
+    return Array.from({ length: 40 }).map((_, i) => ({
       id: `twinkle-${i}`,
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
@@ -27,9 +21,9 @@ const StarBackground = () => {
     }));
   }, []);
 
-  // --- GRUPO 2: Estrellas que caen ---
+  // --- GRUPO 2: Estrellas que caen (Falling) ---
   const fallingStars = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, i) => ({ // Reducido de 40 a 15
+    return Array.from({ length: 15 }).map((_, i) => ({
       id: `fall-${i}`,
       left: `${Math.random() * 100}%`,
       size: `${Math.random() * 2 + 1}px`,
@@ -39,7 +33,7 @@ const StarBackground = () => {
     }));
   }, []);
 
-  // --- GRUPO 3: Estrellas Fugaces ---
+  // --- GRUPO 3: Estrellas Fugaces (Shooting) ---
   const shootingStars = useMemo(() => {
     return Array.from({ length: 4 }).map((_, i) => ({
       id: `shoot-${i}`,
@@ -53,40 +47,40 @@ const StarBackground = () => {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-gaming-bg">
       
-      {/* 1. NEBULOSAS */}
-      {nebulas.map((nebula, i) => (
-        <div
-          key={`nebula-${i}`}
-          className={`nebula-glow absolute ${nebula.color} ${nebula.size} ${nebula.opacity || 'opacity-30'} will-change-transform`} // Optimización GPU
-          style={{
-            top: nebula.top,
-            left: nebula.left,
-            animationDelay: nebula.delay,
-            animation: `nebula-drift ${20 + i * 5}s infinite ease-in-out alternate`
-          }}
-        />
-      ))}
+      {/* NUEVO FONDO AMBIENTAL 
+         Sustituye a las nebulosas. Es un degradado radial sutil.
+         - from-indigo-900/20: Un toque azul oscuro muy sutil en el centro.
+         - via-[#0a0c10]: El color oscuro de tu tema.
+         - to-black: Bordes negros.
+      */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-500/10 via-[#0a0c10]/50 to-black/80 z-0"></div>
 
-      {/* 2. ESTRELLAS DESTACADAS (Fijas) */}
+      {/* LUZ CELESTIAL (Opcional)
+         Un brillo dorado muy tenue en la parte superior central para iluminar el título del Hero.
+      */}
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-hytale-gold/5 blur-[120px] rounded-full mix-blend-screen pointer-events-none"></div>
+
+
+      {/* 1. ESTRELLAS DESTACADAS (Fijas) */}
       {Object.values(DESTINATIONS).map((dest, i) => (
           <div 
               key={`dest-${i}`}
-              className={`absolute rounded-full ${dest.color} ${dest.shadow} shadow-[0_0_15px_currentColor] animate-pulse`}
+              className={`absolute rounded-full ${dest.color} ${dest.shadow} shadow-[0_0_15px_currentColor] animate-pulse z-10`}
               style={{
                   left: `${dest.x}%`,
                   top: `${dest.y}%`,
-                  width: '5px',
-                  height: '5px',
+                  width: '4px',
+                  height: '4px',
                   opacity: 0.8
               }}
           />
       ))}
 
-      {/* 3. ESTRELLAS NORMALES */}
+      {/* 2. ESTRELLAS NORMALES */}
       {twinklingStars.map((star) => (
         <div
           key={star.id}
-          className="star-twinkle"
+          className="star-twinkle z-0"
           style={{
             top: star.top,
             left: star.left,
@@ -98,11 +92,11 @@ const StarBackground = () => {
         />
       ))}
 
-      {/* 4. ESTRELLAS CAYENDO */}
+      {/* 3. ESTRELLAS CAYENDO */}
       {fallingStars.map((star) => (
         <div
           key={star.id}
-          className="star-falling"
+          className="star-falling z-0"
           style={{
             left: star.left,
             width: star.size,
@@ -114,11 +108,11 @@ const StarBackground = () => {
         />
       ))}
 
-      {/* 5. FUGACES */}
+      {/* 4. FUGACES */}
       {shootingStars.map((star) => (
         <div
           key={star.id}
-          className="star-shooting"
+          className="star-shooting z-0"
           style={{
             top: star.top,
             left: star.left,
@@ -128,17 +122,10 @@ const StarBackground = () => {
         />
       ))}
       
-      {/* 6. VIGNETTE */}
-      <div className="absolute inset-0 bg-[radial-gradient(transparent_50%,#0a0c10_100%)]" />
+      {/* 5. VIGNETTE (Bordes oscuros para centrar la atención) */}
+      <div className="absolute inset-0 bg-[radial-gradient(transparent_40%,#000000_100%)] z-10" />
 
-      <style>{`
-        @keyframes nebula-drift {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(50px, -30px) scale(1.2); }
-          66% { transform: translate(-40px, 40px) scale(0.9); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-      `}</style>
+      {/* Se eliminó el style de keyframes nebula-drift porque ya no se usa */}
     </div>
   );
 };

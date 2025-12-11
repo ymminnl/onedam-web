@@ -20,68 +20,13 @@ const SeverityIcon = ({ severity }) => {
 };
 
 const getSeverityStyles = (severity) => {
-  if (severity === 'high') return "border-l-red-600 shadow-[inset_10px_0_20px_-10px_rgba(220,38,38,0.1)]"; // Rojo intenso
-  if (severity === 'medium') return "border-l-orange-500 shadow-[inset_10px_0_20px_-10px_rgba(249,115,22,0.1)]"; // Naranja
-  return "border-l-blue-500 shadow-[inset_10px_0_20px_-10px_rgba(59,130,246,0.1)]"; // Azul/Info
+  if (severity === 'high') return "border-l-red-600 shadow-[inset_10px_0_20px_-10px_rgba(220,38,38,0.1)]"; 
+  if (severity === 'medium') return "border-l-orange-500 shadow-[inset_10px_0_20px_-10px_rgba(249,115,22,0.1)]";
+  return "border-l-blue-500 shadow-[inset_10px_0_20px_-10px_rgba(59,130,246,0.1)]"; 
 };
 
 const generateId = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-// --- VARIANTES DE ANIMACIÓN (RESTAURADAS AL ESTILO INICIO) ---
-
-// 1. Contenedor con cascada (Stagger)
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { 
-      staggerChildren: 0.1, // Que aparezcan uno tras otro
-      delayChildren: 0.1 
-    }
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 0.2 }
-  }
-};
-
-// 2. Ítems apareciendo suavemente (Sin movimiento, solo Fade)
-const itemAppearVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1, 
-    transition: { duration: 0.5, ease: "easeOut" }
-  }
-};
-
-// 3. Cabecera (Aparición suave)
-const headerVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1, height: "auto", 
-    transition: { duration: 0.8, ease: "easeOut" } 
-  },
-  exit: { 
-    opacity: 0, height: 0, overflow: 'hidden', 
-    transition: { duration: 0.3 } 
-  }
-};
-
-// 4. Detalle de Tarjeta (Transición Cinemática tipo Página)
-const pageTransitionVariants = {
-  hidden: { opacity: 0, y: 10 }, // Solo opacidad y un ligero movimiento vertical
-  visible: { 
-    opacity: 1, y: 0,
-    filter: 'blur(0px)', // Forzamos 0 por si acaso
-    transition: { duration: 0.4, ease: "easeOut" }
-  },
-  exit: { 
-    opacity: 0, y: -10, // Salida suave hacia arriba
-    transition: { duration: 0.3, ease: "easeIn" }
-  }
-};
-
-// --- COMPONENTE PRINCIPAL ---
 function Wiki() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -99,18 +44,14 @@ function Wiki() {
     setSearchTerm('');
   };
 
-  // Scroll al inicio al entrar a una categoría
   useEffect(() => {
     if (selectedCategory) {
-      // Usamos un timeout y scroll instantáneo para asegurar que funcione
-      // incluso si la altura de la página cambia drásticamente
       setTimeout(() => {
         window.scrollTo(0, 0);
       }, 10);
     }
   }, [selectedCategory]);
 
-  // Scroll automático a items específicos
   useEffect(() => {
     if (selectedCategory && targetItemId) {
       const timer = setTimeout(() => {
@@ -123,7 +64,6 @@ function Wiki() {
     }
   }, [selectedCategory, targetItemId]);
 
-  // Lógica de Búsqueda
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) return [];
     const term = searchTerm.toLowerCase();
@@ -174,61 +114,47 @@ function Wiki() {
 
   const activeContent = selectedCategory ? wikiContent[selectedCategory] : null;
 
-  // --- RENDERS AUXILIARES ---
-
   const renderHeader = () => (
-    <AnimatePresence>
-      {!selectedCategory && (
-        <motion.div
-          variants={headerVariants}
-          initial="hidden" animate="visible" exit="exit"
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-hytale-gold drop-shadow-lg mb-4 md:mb-6 break-words">
-            Wiki Oficial
-          </h1>
-          <p className="text-lg md:text-xl text-hytale-text max-w-2xl mx-auto mb-8 md:mb-10 px-2">
-            Todo lo que necesitas saber para sobrevivir y dominar en Onedam.
-          </p>
+    !selectedCategory && (
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-hytale-gold drop-shadow-lg mb-4 md:mb-6 break-words">
+          Wiki Oficial
+        </h1>
+        <p className="text-lg md:text-xl text-hytale-text max-w-2xl mx-auto mb-8 md:mb-10 px-2">
+          Todo lo que necesitas saber para sobrevivir y dominar en Onedam.
+        </p>
 
-          <div className="relative max-w-xl mx-auto group w-full z-20">
-            <input
-              type="text"
-              placeholder="Buscar reglas, comandos, objetos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-10 py-3 md:py-4 bg-black/40 backdrop-blur-md border border-hytale-gold/30 rounded-xl text-hytale-text placeholder-hytale-text/50 focus:outline-none focus:border-hytale-gold transition-all shadow-lg text-sm md:text-base"
-            />
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-              <Search className="text-hytale-gold opacity-50 group-focus-within:opacity-100 transition-opacity" size={20} />
-            </div>
-            {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm('')}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-hytale-text/50 hover:text-white transition-colors z-10"
-              >
-                <ArrowLeft size={18} className="rotate-45" />
-              </button>
-            )}
+        <div className="relative max-w-xl mx-auto group w-full z-20">
+          <input
+            type="text"
+            placeholder="Buscar reglas, comandos, objetos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-10 py-3 md:py-4 bg-black/40 backdrop-blur-md border border-hytale-gold/30 rounded-xl text-hytale-text placeholder-hytale-text/50 focus:outline-none focus:border-hytale-gold transition-all shadow-lg text-sm md:text-base"
+          />
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+            <Search className="text-hytale-gold opacity-50 group-focus-within:opacity-100 transition-opacity" size={20} />
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-hytale-text/50 hover:text-white transition-colors z-10"
+            >
+              <ArrowLeft size={18} className="rotate-45" />
+            </button>
+          )}
+        </div>
+      </div>
+    )
   );
 
   const renderDetail = () => {
-    // Calcular índices para navegación
     const currentIndex = wikiCategories.findIndex(c => c.id === selectedCategory);
     const prevCat = currentIndex > 0 ? wikiCategories[currentIndex - 1] : null;
     const nextCat = currentIndex < wikiCategories.length - 1 ? wikiCategories[currentIndex + 1] : null;
 
     return (
-    <motion.div
-      key="detail"
-      variants={pageTransitionVariants}
-      initial="hidden" animate="visible" exit="exit"
-      className="max-w-5xl mx-auto w-full relative"
-    >
+    <div className="max-w-5xl mx-auto w-full relative">
       <button
         onClick={handleBack}
         className="flex items-center text-hytale-gold hover:text-white mb-6 md:mb-8 transition-colors group px-3 py-2 rounded-lg hover:bg-white/5 text-sm md:text-base relative z-10"
@@ -248,18 +174,12 @@ function Wiki() {
 
           <div className="space-y-4">
             {activeContent.sections.map((section, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.3 }}
-              >
-                {/* LISTA LIMPIA SIN CAJAS NI FONDOS PROPIOS */}
+              <div key={idx}>
                 <div className="divide-y divide-white/5">
                   {section.items.map((item, i) => {
                     const itemId = generateId(item.name);
                     const isTarget = targetItemId === itemId;
                     
-                    // Color del título
                     let titleColor = "text-hytale-gold";
                     if (item.severity === 'high') titleColor = "text-red-400";
                     else if (item.severity === 'medium') titleColor = "text-orange-400";
@@ -273,24 +193,21 @@ function Wiki() {
                         `}
                       >
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-12">
-                            
-                                                          <div className="flex-1">
-                                                              <div className="flex items-center gap-3 mb-2">
-                                                                <h4 className={`text-lg md:text-xl font-serif font-bold tracking-wide ${titleColor}`}>
-                                                                    {item.name}
-                                                                </h4>
-                                                                {item.severity === 'high' && (
-                                                                  <span className="text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 tracking-wider">
-                                                                    Critico
-                                                                  </span>
-                                                                )}
-                                                              </div>
-                                                              
-                                                              <p className="text-hytale-text/80 text-sm md:text-base leading-relaxed font-sans">
-                                                                  {item.desc}
-                                                              </p>
-                                                          </div>
-                            {/* Sanción minimalista */}
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h4 className={`text-lg md:text-xl font-serif font-bold tracking-wide ${titleColor}`}>
+                                      {item.name}
+                                  </h4>
+                                  {item.severity === 'high' && (
+                                    <span className="text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 tracking-wider">
+                                      Critico
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-hytale-text/80 text-sm md:text-base leading-relaxed font-sans">
+                                    {item.desc}
+                                </p>
+                            </div>
                             {item.sanction && (
                                 <div className="mt-2 md:mt-1 md:text-right min-w-[200px]">
                                     <span className="block text-[10px] font-bold uppercase tracking-widest text-hytale-text/30 mb-1">Consecuencia</span>
@@ -304,11 +221,10 @@ function Wiki() {
                     );
                   })}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          {/* Navegación entre Categorías */}
           <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">
             {prevCat ? (
                 <button 
@@ -356,42 +272,30 @@ function Wiki() {
           <p className="mt-2 text-hytale-text/30">Pronto agregaremos información sobre {selectedCategory}.</p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
   };
 
   const renderSearchResults = () => {
     if (searchResults.length === 0) {
       return (
-        <motion.div
-          key="results-empty"
-          variants={containerVariants} // Usar fade suave
-          initial="hidden" animate="visible" exit="exit"
-          className="text-center py-20"
-        >
+        <div className="text-center py-20">
           <Search className="mx-auto text-hytale-text/20 mb-4" size={48} />
           <p className="text-hytale-text/50 text-lg">No encontramos nada sobre "{searchTerm}"</p>
           <p className="text-hytale-text/30 text-sm">Prueba con palabras como "hacks", "protección", "chat"...</p>
-        </motion.div>
+        </div>
       );
     }
 
     return (
-      <motion.div
-        key="results-list"
-        variants={containerVariants} // Usar variante con stagger
-        initial="hidden" animate="visible" exit="exit"
-        className="max-w-4xl mx-auto w-full"
-      >
+      <div className="max-w-4xl mx-auto w-full">
         <p className="text-hytale-text/50 mb-6 text-sm uppercase tracking-widest pl-2">
           Resultados encontrados: {searchResults.length}
         </p>
         <div className="grid grid-cols-1 gap-4">
           {searchResults.map((result) => (
-            <motion.div
+            <div
               key={`${result.categoryId}-${result.itemId}`}
-              variants={itemAppearVariants} // Usar variante que sube lento
-              // NO forzamos initial/animate aquí porque el padre (containerVariants) lo controla
               onClick={() => handleSearchResultClick(result.categoryId, result.itemId)}
               className="flex items-start gap-4 p-5 bg-black/40 backdrop-blur-md border border-white/10 hover:border-hytale-gold/50 rounded-xl cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg group"
             >
@@ -414,24 +318,18 @@ function Wiki() {
                   {result.matchContext}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     );
   };
 
   const renderCategories = () => (
-    <motion.div
-      key="categories-grid"
-      variants={containerVariants} // Usar variante con stagger
-      initial="hidden" animate="visible" exit="exit"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {wikiCategories.map((category) => (
-        <motion.div
+        <div
           key={category.id}
-          variants={itemAppearVariants} // Usar variante que sube lento
           onClick={() => setSelectedCategory(category.id)}
           className="group bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-5 md:p-6 hover:bg-white/5 hover:border-hytale-gold/50 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(205,176,117,0.1)] hover:-translate-y-1 h-full"
         >
@@ -446,31 +344,24 @@ function Wiki() {
           <p className="text-hytale-text/70 leading-relaxed text-sm md:text-base">
             {category.description}
           </p>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 
   return (
     <section className="container mx-auto px-4 pt-36 pb-16 relative z-10 min-h-screen flex flex-col">
       
-      {/* IMAGEN DE FONDO (Igual que en Home) */}
-      <div 
-        className="fixed inset-0 z-[-20] bg-cover bg-center" 
-        style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-      ></div>
+      {/* NUEVO FONDO: Sólido Púrpura Oscuro / Azulado (Cubre las estrellas de la App) */}
+      <div className="fixed inset-0 z-[-20] bg-gradient-to-b from-[#121420] via-[#0d0f1a] to-[#050508]"></div>
       
-      {/* Overlay Oscuro Base (Igual que en Home: bg-black opacity-50) */}
-      <div className="fixed inset-0 z-[-15] bg-black/50 pointer-events-none"></div>
-
-      {/* FONDO DEGRADADO GLOBAL DE LA WIKI (Para lectura abajo) */}
-      {/* Empieza transparente (respeta el overlay base) y se va a negro sólido. Fixed para evitar overflow. */}
-      <div className="fixed inset-0 z-[-10] pointer-events-none bg-gradient-to-b from-transparent via-[#080a0f]/80 to-[#080a0f]"></div>
+      {/* Overlay opcional para dar un tinte más 'Wiki' si es necesario, o quitar si quieres solo sólido */}
+      <div className="fixed inset-0 z-[-15] bg-[#0f0c29] opacity-30 pointer-events-none"></div>
 
       {renderHeader()}
-      <AnimatePresence mode="wait">
-        {selectedCategory ? renderDetail() : (searchTerm ? renderSearchResults() : renderCategories())}
-      </AnimatePresence>
+      
+      {selectedCategory ? renderDetail() : (searchTerm ? renderSearchResults() : renderCategories())}
+      
     </section>
   );
 }

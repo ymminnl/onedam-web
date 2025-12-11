@@ -1,63 +1,49 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import serverInfo from '../data/server-info';
-// Importamos iconos. Usamos 'Clapperboard' para TikTok (Lucide no tiene TikTok oficial).
-import { Instagram, Clapperboard, Gamepad2, Heart } from 'lucide-react';
-
-const SocialIcons = {
-  discord: Gamepad2,
-  tiktok: Clapperboard, // Icono alternativo para TikTok
-  instagram: Instagram
-};
+import { Heart } from 'lucide-react';
 
 function Footer() {
-  const { serverName, socials } = serverInfo;
+  const { serverName } = serverInfo;
   const currentYear = new Date().getFullYear();
+  
+  const location = useLocation();
+  const isWiki = location.pathname === '/wiki';
+
+  // AJUSTE DE COLORES:
+  // "Más dureza" = Tonos ligeramente más claros/sólidos que el fondo para que la barra se defina mejor.
+  // Wiki: Fondo es #090914 -> Footer sube a #0c0c1c (Un toque más azulado/visible)
+  // Home: Fondo es #0a0c10 -> Footer sube a #0e1016 (Un toque más gris/sólido)
+  const footerBgClass = isWiki 
+    ? "bg-[#0c0c1c]/95 border-white/10" 
+    : "bg-[#0e1016]/95 border-hytale-gold/10";
 
   return (
-    // Fondo oscuro con desenfoque y borde superior dorado sutil. Padding reducido (pt-10).
-    <footer className="bg-black/80 backdrop-blur-md border-t border-hytale-gold/10 pt-10 pb-8 relative z-20 mt-auto">
-      <div className="container mx-auto px-4">
+    <footer className={`${footerBgClass} backdrop-blur-md border-t py-2 relative z-20 mt-auto transition-colors duration-500 snap-end`}>
+      <div className="container mx-auto px-4 flex justify-center items-center">
         
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-          
-          {/* 1. Logo y Eslogan */}
-          <div className="text-center md:text-left">
-            <h2 className="text-2xl font-serif text-hytale-gold mb-1 tracking-wide drop-shadow-md">
+        <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 text-center">
+            
+            <h2 className="text-xs font-serif font-bold text-hytale-gold tracking-wide">
               {serverName}
             </h2>
-            <p className="text-hytale-text/60 text-xs max-w-xs mx-auto md:mx-0 font-sans">
+
+            <span className="hidden md:inline text-[10px] text-hytale-text/30">|</span>
+            
+            <p className="hidden md:block text-[10px] text-hytale-text/50 max-w-xs truncate">
               {serverInfo.footerDescription}
             </p>
-          </div>
 
-          {/* 2. Redes Sociales (Botones cuadrados elegantes) */}
-          <div className="flex gap-3">
-            {socials.map((social) => {
-              const Icon = SocialIcons[social.icon] || Gamepad2;
-              return (
-                <a 
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-hytale-text hover:bg-hytale-gold/10 hover:border-hytale-gold hover:text-hytale-gold transition-all duration-300 shadow-lg hover:shadow-gold hover:-translate-y-1"
-                  aria-label={social.name}
-                >
-                  <Icon size={18} />
-                </a>
-              )
-            })}
-          </div>
-        </div>
+            <span className="hidden md:inline text-[10px] text-hytale-text/30">|</span>
 
-        {/* 3. Copyright y Créditos */}
-        <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-hytale-text/30 font-mono">
-          <p>
-            &copy; {currentYear} <span className="text-hytale-gold/50">{serverName}</span>.
-          </p>
-          <p className="flex items-center gap-2 mt-2 md:mt-0">
-            Hecho con <Heart size={10} className="text-red-500/50 fill-red-500/50" /> para la comunidad
-          </p>
+            <div className="text-[10px] text-hytale-text/30 font-mono flex items-center gap-1">
+               <span>&copy; {currentYear}</span>
+               <span>-</span>
+               <span className="flex items-center gap-1">
+                 Hecho con <Heart size={8} className="text-red-500/50 fill-red-500/50" />
+               </span>
+            </div>
+
         </div>
 
       </div>

@@ -38,11 +38,11 @@ function ConnectModal({ onClose }) {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -50, opacity: 0 }}
-        className="bg-hytale-blue/80 rounded-lg p-6 relative w-full max-w-lg mx-auto z-[1000] backdrop-blur-sm" // Fondo translúcido
+        className="bg-hytale-blue/80 rounded-lg p-4 md:p-6 relative w-[90%] md:w-full max-w-lg mx-auto z-[1000] backdrop-blur-sm"
       >
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-hytale-gold hover:text-hytale-gold-hover transition-colors"
+          className="absolute top-2 right-2 p-2 z-50 text-hytale-gold hover:text-hytale-gold-hover transition-colors rounded-full active:bg-white/10"
         >
           <CloseIcon size={24} />
         </button>
@@ -52,7 +52,7 @@ function ConnectModal({ onClose }) {
         </h2>
 
         <div className="flex flex-col items-center gap-6 w-full">
-          
+
           {/* Contenedor de la IP */}
           <div className="w-full bg-black/20 border border-white/10 rounded-xl p-4 flex flex-col items-center justify-center gap-2">
             <span className="text-hytale-text/70 text-sm font-sans uppercase tracking-widest">Dirección IP</span>

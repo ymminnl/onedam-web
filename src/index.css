@@ -119,33 +119,53 @@ button:focus {
 
 @keyframes shoot {
   0% {
-    transform: rotate(45deg) translateX(0); 
-    opacity: 0;
+    /* Empieza fuera de la posición original para que no aparezca de golpe */
+    transform: rotate(45deg) translateX(-150px); 
+    opacity: 1;
   }
-  5% {
+  70% {
     opacity: 1;
   }
   100% {
-    transform: rotate(45deg) translateX(200vmax); 
+    /* Viaja una distancia larga para cruzar la pantalla */
+    transform: rotate(45deg) translateX(150vmax); 
     opacity: 0;
   }
 }
 
 .star-shooting {
   position: absolute;
-  width: 20px;
+  /* AUMENTADO: De 20px a 200px para que parezca una estela de velocidad */
+  width: 200px; 
   height: 2px;
-  background: linear-gradient(90deg, rgba(255,255,255,1), rgba(255,255,255,0));
+  
+  /* CORREGIDO: Gradiente de transparente (cola) a blanco (cabeza) */
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+  
   border-radius: 999px;
-  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
   
   animation-name: shoot;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: ease-out; /* Comienza rápido, efecto más natural */
   animation-iteration-count: infinite;
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
   z-index: 0;
+}
+
+/* NUEVO: Cabeza brillante de la estrella */
+.star-shooting::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0; /* Se ubica en la punta delantera (derecha) */
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px 2px rgba(255, 255, 255, 1); /* Resplandor intenso */
 }
 
 @keyframes twinkle {
