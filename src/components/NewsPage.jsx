@@ -7,7 +7,7 @@ import Footer from './Footer';
 // ⚠️ CAMBIA ESTA URL por la dirección real donde corre tu bot.
 // Si estás probando en tu PC, usa: "http://localhost:8080/api/news"
 // Si está en un hosting (ej. Railway), usa: "https://tu-bot.up.railway.app/api/news"
-const API_URL = "https://TU_URL_DEL_BOT_AQUI.com/api/news"; 
+const API_URL = "https://https://transcript.onedam.net/api/news"; 
 
 const NewsPage = () => {
   const [news, setNews] = useState([]);
