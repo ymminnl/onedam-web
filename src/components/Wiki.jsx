@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, ArrowRight, 
@@ -274,18 +275,18 @@ function Wiki() {
             })}
           </div>
           
-          <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">
+          <div className="flex flex-col md:flex-row justify-between gap-4 mt-8">
             {prevCat ? (
                 <button 
                     onClick={() => setSelectedCategory(prevCat.id)}
-                    className="flex items-center gap-4 text-left group w-full md:w-auto p-4 rounded-xl bg-black/20 hover:bg-white/5 border border-white/5 hover:border-hytale-gold/30 transition-all"
+                    className="flex items-center gap-3 md:gap-4 text-left group w-fit p-3 md:p-5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-hytale-gold/40 transition-all shadow-xl"
                 >
-                    <div className="p-2 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold/20 transition-colors">
-                      <ArrowLeft className="text-hytale-gold group-hover:-translate-x-1 transition-transform" size={20} />
+                    <div className="p-2 md:p-3 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold group-hover:text-black transition-all">
+                      <ArrowLeft size={18} className="md:w-6 md:h-6 group-hover:-translate-x-1 transition-transform" />
                     </div>
                     <div>
-                        <span className="block text-xs text-hytale-text/50 uppercase tracking-wider mb-1">Anterior</span>
-                        <span className="text-lg font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{prevCat.title}</span>
+                        <span className="block text-[10px] md:text-xs text-hytale-text/40 uppercase tracking-wider mb-1">Anterior</span>
+                        <span className="text-sm md:text-2xl font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{prevCat.title}</span>
                     </div>
                 </button>
             ) : <div />}
@@ -293,17 +294,30 @@ function Wiki() {
             {nextCat ? (
                 <button 
                     onClick={() => setSelectedCategory(nextCat.id)}
-                    className="flex items-center justify-end gap-4 text-right group w-full md:w-auto p-4 rounded-xl bg-black/20 hover:bg-white/5 border border-white/5 hover:border-hytale-gold/30 transition-all"
+                    className="flex items-center justify-end gap-3 md:gap-4 text-right group w-fit ml-auto p-3 md:p-5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-hytale-gold/40 transition-all shadow-xl"
                 >
                     <div>
-                        <span className="block text-xs text-hytale-text/50 uppercase tracking-wider mb-1">Siguiente</span>
-                        <span className="text-lg font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{nextCat.title}</span>
+                        <span className="block text-[10px] md:text-xs text-hytale-text/40 uppercase tracking-wider mb-1">Siguiente</span>
+                        <span className="text-sm md:text-2xl font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">{nextCat.title}</span>
                     </div>
-                    <div className="p-2 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold/20 transition-colors">
-                      <ArrowRight className="text-hytale-gold group-hover:translate-x-1 transition-transform" size={20} />
+                    <div className="p-2 md:p-3 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold group-hover:text-black transition-all">
+                      <ArrowRight size={18} className="md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
                     </div>
                 </button>
-            ) : <div />}
+            ) : (
+                <Link 
+                    to="/news"
+                    className="flex items-center justify-end gap-3 md:gap-4 text-right group w-fit ml-auto p-3 md:p-5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-hytale-gold/40 transition-all shadow-xl"
+                >
+                    <div>
+                        <span className="block text-[10px] md:text-xs text-hytale-text/40 uppercase tracking-wider mb-1">Siguiente Sección</span>
+                        <span className="text-sm md:text-2xl font-serif text-hytale-gold group-hover:text-white transition-colors">Ver Noticias</span>
+                    </div>
+                    <div className="p-2 md:p-3 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold group-hover:text-black transition-all">
+                      <ArrowRight size={18} className="md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                </Link>
+            )}
           </div>
 
           {activeContent.lastUpdated && (
@@ -376,27 +390,44 @@ function Wiki() {
   };
 
   const renderCategories = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-      {wikiCategories.map((category) => (
-        <div
-          key={category.id}
-          onClick={() => setSelectedCategory(category.id)}
-          // CAMBIO: Degradado sutil (from-[#1e2235] to-[#121420]) + hover más claro
-          className="group bg-gradient-to-br from-[#1e2235] to-[#121420] border border-white/5 rounded-xl p-5 md:p-6 hover:from-[#252a40] hover:to-[#1a1d2d] hover:border-hytale-gold/40 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 h-full"
-        >
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-hytale-gold/10 rounded-lg group-hover:bg-hytale-gold/20 transition-colors">
-              <category.icon className="text-hytale-gold w-6 h-6 md:w-8 md:h-8" />
+    <div className="flex flex-col gap-12 md:gap-20">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+        {wikiCategories.map((category) => (
+          <div
+            key={category.id}
+            onClick={() => setSelectedCategory(category.id)}
+            className="group bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl p-4 md:p-6 hover:bg-white/[0.07] hover:border-hytale-gold/40 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-hytale-gold/5 hover:-translate-y-1 h-full flex flex-col"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 md:gap-4 mb-3 md:mb-4 text-center sm:text-left">
+              <div className="p-2 md:p-3 bg-hytale-gold/10 rounded-lg group-hover:bg-hytale-gold/20 transition-colors w-fit">
+                <category.icon className="text-hytale-gold w-5 h-5 md:w-8 md:h-8" />
+              </div>
+              <h3 className="text-sm md:text-2xl font-serif text-hytale-text group-hover:text-hytale-gold transition-colors leading-tight">
+                {category.title}
+              </h3>
             </div>
-            <h3 className="text-xl md:text-2xl font-serif text-hytale-text group-hover:text-hytale-gold transition-colors">
-              {category.title}
-            </h3>
+            <p className="text-hytale-text/70 leading-relaxed text-[10px] md:text-base line-clamp-2 sm:line-clamp-none">
+              {category.description}
+            </p>
           </div>
-          <p className="text-hytale-text/70 leading-relaxed text-sm md:text-base">
-            {category.description}
-          </p>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      {/* CONTROLADOR DE NAVEGACIÓN GLOBAL - DEBAJO DE LAS TARJETAS SIN LÍNEA */}
+      <div className="flex justify-end mt-4">
+        <Link 
+          to="/news" 
+          className="flex items-center justify-end gap-3 md:gap-4 text-right group w-fit p-3 md:p-5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-hytale-gold/40 transition-all shadow-xl"
+        >
+          <div>
+            <span className="block text-[10px] md:text-xs text-hytale-text/40 uppercase tracking-wider mb-1">Siguiente Sección</span>
+            <span className="text-sm md:text-2xl font-serif text-hytale-gold group-hover:text-white transition-colors">Ver Noticias</span>
+          </div>
+          <div className="p-2 md:p-3 bg-hytale-gold/10 rounded-full group-hover:bg-hytale-gold group-hover:text-black transition-all">
+            <ArrowRight size={18} className="md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      </div>
     </div>
   );
 

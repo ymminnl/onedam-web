@@ -26,42 +26,44 @@ function App() {
   const handleOpenModal = () => setIsBackgroundBlurred(true);
   const handleCloseModal = () => setIsBackgroundBlurred(false);
 
-  // 1. APAGAR SNAP AL INICIAR NAVEGACIÓN
-  // Esto evita que la página 'salte' mientras la antigua se está yendo.
+  // 1. APAGAR/ENCENDER SNAP SEGÚN LA RUTA
   useEffect(() => {
-    setIsSnapEnabled(false);
+    if (location.pathname === '/') {
+      // Forzamos el scroll a 0 inmediatamente antes de activar nada
+      if (mainRef.current) mainRef.current.scrollTop = 0;
+      
+      const timer = setTimeout(() => {
+        setIsSnapEnabled(true);
+      }, 400); // Aumentamos el margen para que la animación termine
+      return () => clearTimeout(timer);
+    } else {
+      setIsSnapEnabled(false);
+      if (mainRef.current) mainRef.current.scrollTop = 0;
+    }
     
-    // Configuración única del navegador
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
   }, [location.pathname]);
 
-  // 2. RESETEAR SCROLL Y REACTIVAR SNAP
-  // Se llama SOLAMENTE cuando la página vieja ya desapareció por completo.
+  // 2. RESETEAR SCROLL Y REACTIVAR SNAP TRAS NAVEGACIÓN
   const handleExitComplete = () => {
     if (mainRef.current) {
-      // Forzamos el scroll a 0 sin animaciones ni efectos
       mainRef.current.scrollTop = 0;
-    }
-
-    // Si estamos en el Home, activamos el snap, pero le damos un respiro
-    // al navegador (50ms) para que pinte el nuevo componente (Hero) primero.
-    if (location.pathname === '/') {
-      setTimeout(() => {
-        setIsSnapEnabled(true);
-      }, 50);
     }
   };
 
   // CLASES DEL CONTENEDOR
-  // Ahora dependen del estado 'isSnapEnabled', no solo de la ruta.
   const containerClasses = isSnapEnabled 
     ? "h-screen overflow-y-auto snap-y snap-mandatory relative bg-gaming-bg"
     : "h-screen overflow-y-auto relative bg-gaming-bg";
 
   return (
-    <div ref={mainRef} className={containerClasses}>
+    <div 
+      id="main-scroll-container"
+      ref={mainRef} 
+      className={containerClasses}
+    >
       
       <div className="fixed inset-0 bg-gradient-gaming opacity-50 z-0 pointer-events-none"></div>
       

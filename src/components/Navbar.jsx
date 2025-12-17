@@ -15,21 +15,59 @@ const NavIcons = {
 function Navbar() {
   const { logoText, navbarLinks } = serverInfo;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolledToNews, setIsScrolledToNews] = useState(false);
   const mobileMenuRef = useRef(null);
   const toggleButtonRef = useRef(null);
   
   const location = useLocation();
-  const isWiki = location.pathname === '/wiki';
 
-  // 1. Color de la Barra Superior (Desktop/Mobile Header)
-  const navBackgroundClass = isWiki 
-    ? "bg-[#121420]/90 border-white/10" 
-    : "bg-[#0a0a0c]/90 border-white/5";
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setIsScrolledToNews(false);
+      return;
+    }
 
-  // 2. Color del Menú Desplegable (Mobile Overlay) - [NUEVO AJUSTE]
-  const mobileMenuBgClass = isWiki
-    ? "bg-[#121420]/95" // Púrpura oscuro para la Wiki (Coherencia visual)
-    : "bg-black/80";    // Negro clásico para el resto
+    // Esperamos un momento a que el DOM se asiente
+    const timer = setTimeout(() => {
+      const scrollContainer = document.getElementById('main-scroll-container');
+      const newsSection = document.getElementById('news-section');
+      
+      if (!scrollContainer || !newsSection) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setIsScrolledToNews(entry.isIntersecting);
+        },
+        { 
+          root: scrollContainer,
+          threshold: 0.1,
+          rootMargin: "-80px 0px 0px 0px"
+        }
+      );
+
+      observer.observe(newsSection);
+
+      return () => observer.disconnect();
+    }, 500); // Retraso para sincronizar con las animaciones de App.jsx
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  const isWikiPage = location.pathname === '/wiki';
+  const isNewsPage = location.pathname === '/news' || (location.pathname === '/' && isScrolledToNews);
+  const isNewsDetail = location.pathname.startsWith('/news/');
+
+  // 1. Color de la Barra Superior
+  let navBackgroundClass = "bg-[#0a0a0c]/90 border-white/5"; // Default (Hero)
+  if (isWikiPage) navBackgroundClass = "bg-[#121420]/90 border-white/10";
+  if (isNewsPage) navBackgroundClass = "bg-[#0a0a0c]/90 border-white/10";
+  if (isNewsDetail) navBackgroundClass = "bg-[#0e1826]/90 border-white/10";
+
+  // 2. Color del Menú Desplegable (Mobile)
+  let mobileMenuBgClass = "bg-black/80";
+  if (isWikiPage) mobileMenuBgClass = "bg-[#121420]/95";
+  if (isNewsPage) mobileMenuBgClass = "bg-[#0a0a0c]/95";
+  if (isNewsDetail) mobileMenuBgClass = "bg-[#0e1826]/95";
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 

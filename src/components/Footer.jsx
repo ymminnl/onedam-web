@@ -8,15 +8,18 @@ function Footer() {
   const currentYear = new Date().getFullYear();
   
   const location = useLocation();
-  const isWiki = location.pathname === '/wiki';
+  const isWikiPage = location.pathname === '/wiki';
+  const isNewsPage = location.pathname === '/news';
+  const isNewsDetail = location.pathname.startsWith('/news/');
 
-  const footerBgClass = isWiki 
-    ? "bg-[#0c0c1c]/95 border-white/10" 
-    : "bg-[#0e1016]/95 border-hytale-gold/10";
+  let footerBgClass = "bg-[#0a0a0c]/95 border-white/10"; // Default
+  if (isWikiPage) footerBgClass = "bg-[#121420]/95 border-white/10";
+  if (isNewsPage) footerBgClass = "bg-[#0a0a0c]/95 border-white/10";
+  if (isNewsDetail) footerBgClass = "bg-[#0e1826]/95 border-white/10";
 
   return (
     // CAMBIO: 'snap-start' para que el imán lo atrape y no te rebote hacia arriba.
-    <footer className={`${footerBgClass} backdrop-blur-md border-t py-2 relative z-20 mt-auto transition-colors duration-500 snap-start`}>
+    <footer className={`${footerBgClass} backdrop-blur-md border-t py-3 relative z-20 mt-auto transition-colors duration-500 snap-start`}>
       <div className="container mx-auto px-4 flex justify-center items-center">
         
         <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 text-center">
