@@ -1,101 +1,134 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import newsData from '../data/news.json';
+import { Calendar, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
+// ⚠️ CAMBIA ESTA URL por la dirección real donde corre tu bot.
+// Si estás probando en tu PC, usa: "http://localhost:8080/api/news"
+// Si está en un hosting (ej. Railway), usa: "https://tu-bot.up.railway.app/api/news"
+const API_URL = "https://TU_URL_DEL_BOT_AQUI.com/api/news"; 
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { 
-    y: 0, 
-    opacity: 1,
-    transition: { type: 'spring', stiffness: 100 }
-  }
-};
+const NewsPage = () => {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-function NewsPage() {
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo conectar con el servidor de noticias");
+        return res.json();
+      })
+      .then((data) => {
+        setNews(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error cargando noticias:", err);
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
+
   return (
-    <section className="container mx-auto px-4 pt-24 pb-16 relative z-10 min-h-screen">
+    <div className="min-h-screen bg-[#1a1614] text-white">
+      <Navbar />
       
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12 md:mb-16"
-      >
-        {/* Título responsive: 3xl en móvil, 7xl en PC */}
-        <h1 className="text-3xl md:text-6xl lg:text-7xl font-serif text-hytale-gold drop-shadow-lg mb-4 md:mb-6 break-words uppercase">
-          Noticias y Actualizaciones
-        </h1>
-        <p className="text-lg md:text-xl text-hytale-text max-w-2xl mx-auto px-2">
-          Mantente al día con los últimos eventos, parches y anuncios de Onedam.
-        </p>
-      </motion.div>
+      <div className="pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+        {/* Título de la Sección */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold text-hytale-gold mb-4 font-cinzel">
+            Noticias de Onedam
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Entérate de las últimas actualizaciones, eventos y novedades directamente desde nuestro equipo.
+          </p>
+        </motion.div>
 
-      {newsData.length > 0 ? (
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-        >
-          {newsData.map((newsItem) => (
-            <motion.div
-              key={newsItem.id}
-              variants={itemVariants}
-              className="bg-hytale-blue rounded-lg shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-[0_0_20px_rgba(205,176,117,0.15)] hover:-translate-y-2 flex flex-col border border-white/5"
+        {/* Pantalla de Carga */}
+        {loading && (
+          <div className="flex flex-col justify-center items-center h-64 gap-4">
+             <Loader2 className="w-12 h-12 text-hytale-gold animate-spin" />
+             <p className="text-hytale-gold font-mono animate-pulse">Buscando pergaminos...</p>
+          </div>
+        )}
+
+        {/* Pantalla de Error */}
+        {error && (
+          <div className="flex flex-col items-center justify-center text-red-400 bg-red-900/10 p-10 rounded-xl border border-red-900/50">
+            <AlertCircle className="w-12 h-12 mb-4" />
+            <p className="text-xl font-bold">¡Error de conexión!</p>
+            <span className="text-sm text-gray-400 mt-2 text-center">
+              No pudimos obtener las noticias. Asegúrate de que el Bot esté encendido y la URL sea correcta.
+            </span>
+          </div>
+        )}
+
+        {/* Si no hay noticias */}
+        {!loading && !error && news.length === 0 && (
+          <div className="text-center text-gray-500 py-20 border border-dashed border-gray-700 rounded-xl">
+            <p>No hay noticias publicadas en este momento.</p>
+          </div>
+        )}
+
+        {/* Grid de Noticias */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {!loading && !error && news.map((item, index) => (
+            <motion.article
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="group bg-[#2a2624] rounded-xl overflow-hidden border border-[#3a3634] hover:border-hytale-gold/50 transition-all duration-300 shadow-xl"
             >
-              {newsItem.image && (
-                <div className="overflow-hidden h-48">
-                  <img
-                    src={newsItem.image}
-                    alt={newsItem.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                  />
+              {/* Contenedor de Imagen */}
+              <div className="relative h-52 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2a2624] to-transparent opacity-60 z-10" />
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  onError={(e) => { e.target.src = "https://onedam.net/images/default_news.jpg"; }} 
+                />
+                <div className="absolute top-4 left-4 z-20">
+                  <span className="px-3 py-1 bg-hytale-gold text-black text-[10px] font-black uppercase tracking-tighter rounded-sm shadow-lg">
+                    Oficial
+                  </span>
                 </div>
-              )}
-              <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl md:text-2xl font-serif text-hytale-gold mb-3 line-clamp-2">
-                  {newsItem.title}
-                </h3>
-                <p className="text-xs font-bold text-hytale-text/50 mb-4 uppercase tracking-wider">
-                  {newsItem.date}
-                </p>
-                <p className="text-hytale-text leading-relaxed flex-grow mb-6 line-clamp-3 text-sm md:text-base">
-                  {newsItem.excerpt}
-                </p>
-                <Link
-                  to={`/news/${newsItem.id}`}
-                  className="mt-auto inline-block text-center bg-hytale-gold hover:bg-hytale-gold-hover text-hytale-dark font-bold py-2 px-5 rounded-md transition-colors shadow-sm w-full md:w-auto"
-                >
-                  Leer Más
-                </Link>
               </div>
-            </motion.div>
+
+              {/* Información de la Noticia */}
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-hytale-gold/70 text-[11px] mb-3 font-mono">
+                  <Calendar className="w-3 h-3" />
+                  <span>{item.date}</span>
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-hytale-gold transition-colors line-clamp-2 font-cinzel">
+                  {item.title}
+                </h3>
+                
+                <p className="text-gray-400 mb-6 line-clamp-3 text-sm leading-relaxed">
+                  {item.description}
+                </p>
+
+                <div className="flex items-center gap-2 text-hytale-gold font-bold text-xs group-hover:gap-4 transition-all cursor-pointer">
+                  LEER MÁS <ArrowRight className="w-4 h-4" />
+                </div>
+              </div>
+            </motion.article>
           ))}
-        </motion.div>
-      ) : (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-16 md:py-20 bg-black/20 rounded-xl border border-white/10 border-dashed max-w-2xl mx-auto mx-4"
-        >
-          <p className="text-xl md:text-2xl text-hytale-text/50 font-serif">
-            Sin novedades por ahora...
-          </p>
-          <p className="mt-2 text-hytale-text/30 px-4">
-            Estamos trabajando en cosas increíbles. ¡Vuelve pronto!
-          </p>
-        </motion.div>
-      )}
-    </section>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
   );
-}
+};
 
 export default NewsPage;
