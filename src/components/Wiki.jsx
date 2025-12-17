@@ -172,26 +172,33 @@ function Wiki() {
             {activeContent.description}
           </p>
 
-          <div className="space-y-4">
-            {activeContent.sections.map((section, idx) => (
-              <div key={idx}>
-                <div className="divide-y divide-white/5">
-                  {section.items.map((item, i) => {
-                    const itemId = generateId(item.name);
-                    const isTarget = targetItemId === itemId;
-                    
-                    let titleColor = "text-hytale-gold";
-                    if (item.severity === 'high') titleColor = "text-red-400";
-                    else if (item.severity === 'medium') titleColor = "text-orange-400";
+          <div className="space-y-16">
+            {activeContent.sections.map((section, idx) => {
+              const SectionIcon = section.icon;
+              return (
+                <div key={idx}>
+                  <div className="flex items-center gap-3 mb-6 pb-2 border-b border-white/5">
+                    {SectionIcon && <SectionIcon className="text-hytale-gold" size={24} />}
+                    <h3 className="text-2xl font-serif text-hytale-gold">{section.title}</h3>
+                  </div>
 
-                    return (
-                      <div
-                        key={i}
-                        id={itemId}
-                        className={`group py-6 transition-all duration-500
-                          ${isTarget ? 'bg-hytale-gold/5 -mx-4 px-4 rounded-lg' : ''}
-                        `}
-                      >
+                  <div className="divide-y divide-white/5">
+                    {section.items.map((item, i) => {
+                      const itemId = generateId(item.name);
+                      const isTarget = targetItemId === itemId;
+                      
+                      let titleColor = "text-hytale-gold";
+                      if (item.severity === 'high') titleColor = "text-red-400";
+                      else if (item.severity === 'medium') titleColor = "text-orange-400";
+
+                      return (
+                        <div
+                          key={i}
+                          id={itemId}
+                          className={`group py-8 transition-all duration-500
+                            ${isTarget ? 'bg-hytale-gold/5 -mx-4 px-4 rounded-lg' : ''}
+                          `}
+                        >
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-12">
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-2">
@@ -222,7 +229,7 @@ function Wiki() {
                   })}
                 </div>
               </div>
-            ))}
+            ); })}
           </div>
 
           <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">

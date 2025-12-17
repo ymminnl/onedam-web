@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react'; // Usamos useEffect en lugar de useLayoutEffect
 import { Routes, Route, useLocation } from 'react-router-dom'; 
 import { AnimatePresence } from 'framer-motion'; 
 
@@ -17,46 +17,46 @@ import serverInfo from './data/server-info';
 
 function App() {
   const [isBackgroundBlurred, setIsBackgroundBlurred] = useState(false);
+  // Nuevo estado para controlar cuándo el snap es seguro de activar
+  const [isSnapEnabled, setIsSnapEnabled] = useState(false);
+  
   const location = useLocation(); 
   const mainRef = useRef(null); 
-
-  const isHome = location.pathname === '/';
 
   const handleOpenModal = () => setIsBackgroundBlurred(true);
   const handleCloseModal = () => setIsBackgroundBlurred(false);
 
-  // --- SOLUCIÓN NUCLEAR PARA EL SCROLL ---
-  useLayoutEffect(() => {
-    // 1. Evitar que el navegador intervenga
+  // 1. APAGAR SNAP AL INICIAR NAVEGACIÓN
+  // Esto evita que la página 'salte' mientras la antigua se está yendo.
+  useEffect(() => {
+    setIsSnapEnabled(false);
+    
+    // Configuración única del navegador
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
-
-    const scrollContainer = mainRef.current;
-    
-    if (scrollContainer) {
-      // 2. APAGAR TEMPORALMENTE EL SNAP Y EL SMOOTH
-      // Si no hacemos esto, el 'snap-mandatory' peleará contra el scrollTop y ganará (dejándote abajo).
-      scrollContainer.style.scrollSnapType = 'none';
-      scrollContainer.style.scrollBehavior = 'auto';
-      
-      // 3. FORZAR EL SALTO A CERO
-      scrollContainer.scrollTop = 0;
-      
-      // 4. REACTIVAR DESPUÉS DE UN FRAME
-      // Esperamos a que el navegador pinte el salto para volver a encender las físicas.
-      requestAnimationFrame(() => {
-        // Solo restauramos el snap si estamos en el Home (donde se usa)
-        // Eliminamos el valor inline para que las clases de Tailwind tomen el control de nuevo
-        scrollContainer.style.scrollSnapType = ''; 
-        scrollContainer.style.scrollBehavior = ''; 
-      });
-    }
   }, [location.pathname]);
 
+  // 2. RESETEAR SCROLL Y REACTIVAR SNAP
+  // Se llama SOLAMENTE cuando la página vieja ya desapareció por completo.
+  const handleExitComplete = () => {
+    if (mainRef.current) {
+      // Forzamos el scroll a 0 sin animaciones ni efectos
+      mainRef.current.scrollTop = 0;
+    }
+
+    // Si estamos en el Home, activamos el snap, pero le damos un respiro
+    // al navegador (50ms) para que pinte el nuevo componente (Hero) primero.
+    if (location.pathname === '/') {
+      setTimeout(() => {
+        setIsSnapEnabled(true);
+      }, 50);
+    }
+  };
+
   // CLASES DEL CONTENEDOR
-  // Usamos 'snap-mandatory' en Home para el efecto agresivo que te gusta.
-  const containerClasses = isHome 
+  // Ahora dependen del estado 'isSnapEnabled', no solo de la ruta.
+  const containerClasses = isSnapEnabled 
     ? "h-screen overflow-y-auto snap-y snap-mandatory relative bg-gaming-bg"
     : "h-screen overflow-y-auto relative bg-gaming-bg";
 
@@ -70,7 +70,10 @@ function App() {
       <Navbar onOpenModal={handleOpenModal} />
 
       <main className="flex-grow z-10 relative">
-        <AnimatePresence mode="wait">
+        <AnimatePresence 
+          mode="wait" 
+          onExitComplete={handleExitComplete} // Aquí ocurre la magia
+        >
           <Routes location={location} key={location.pathname}>
             
             <Route path="/" element={
