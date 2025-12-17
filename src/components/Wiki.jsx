@@ -19,36 +19,21 @@ const wikiCategories = [
 const generateId = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
 // --- COMPONENTE DE REGLA DESPLEGABLE (Accordion) ---
-const RuleItem = ({ item, targetItemId }) => {
+const RuleItem = ({ item, isOpen, onToggle }) => {
   const itemId = generateId(item.name);
   
-  // LÓGICA DE APERTURA:
-  // 1. Si se buscó específicamente este item (targetItemId), se abre.
-  // 2. Si estamos en PC (ancho > 768px), se abre por defecto.
-  // 3. En móvil, empieza cerrado.
-  const [isOpen, setIsOpen] = useState(() => {
-    if (targetItemId === itemId) return true;
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; // PC: true, Móvil: false
-    }
-    return false;
-  });
-
   return (
     <div 
       id={itemId}
-      // Quitamos 'last:border-0' aquí para manejarlo desde el contenedor padre si es necesario, 
-      // pero para asegurar líneas en todo, dejamos border-b siempre y el padre corta el último.
       className={`group border-b border-white/5 transition-colors duration-300
         ${isOpen ? 'bg-white/5 rounded-lg border-transparent' : 'hover:bg-white/5 hover:rounded-lg'}
       `}
     >
       <button 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between p-4 text-left focus:outline-none"
       >
         <div className="flex items-center gap-3 pr-4">
-          {/* CAMBIO: Color unificado (text-hytale-gold) para todos los títulos */}
           <span className="text-base md:text-xl font-serif font-bold tracking-wide text-hytale-gold">
             {item.name}
           </span>
@@ -70,7 +55,7 @@ const RuleItem = ({ item, targetItemId }) => {
           >
             <div className="px-4 pb-4 pt-0 text-sm md:text-base">
               
-              {/* BADGES DE SEVERIDAD (Dentro del contenido) */}
+              {/* BADGES DE SEVERIDAD */}
               {item.severity === 'high' && (
                 <div className="mb-3">
                     <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20 tracking-wider">
@@ -111,16 +96,21 @@ function Wiki() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [targetItemId, setTargetItemId] = useState(null);
+  const [expandedRuleId, setExpandedRuleId] = useState(null);
 
   const handleBack = () => {
     setSelectedCategory(null);
     setSearchTerm('');
     setTargetItemId(null);
+    setExpandedRuleId(null);
   };
 
   const handleSearchResultClick = (categoryId, itemId) => {
     setSelectedCategory(categoryId);
-    if (itemId) setTargetItemId(itemId);
+    if (itemId) {
+      setTargetItemId(itemId);
+      setExpandedRuleId(itemId);
+    }
     setSearchTerm('');
   };
 
@@ -210,7 +200,7 @@ function Wiki() {
             placeholder="Buscar reglas, comandos, objetos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-10 py-3 md:py-4 bg-black/40 backdrop-blur-md border border-hytale-gold/30 rounded-xl text-hytale-text placeholder-hytale-text/50 focus:outline-none focus:border-hytale-gold transition-all shadow-lg text-sm md:text-base"
+            className="w-full pl-12 pr-10 py-3 md:py-4 bg-[#151725] border border-hytale-gold/30 rounded-xl text-hytale-text placeholder-hytale-text/50 focus:outline-none focus:border-hytale-gold transition-all shadow-lg text-sm md:text-base"
           />
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
             <Search className="text-hytale-gold opacity-50 group-focus-within:opacity-100 transition-opacity" size={20} />
@@ -259,7 +249,6 @@ function Wiki() {
               const SectionIcon = section.icon;
               return (
                 <div key={idx} className={isRulesSection ? "contents" : "block"}>
-                  {/* OCULTAMOS EL HEADER DE SECCIÓN SOLO SI ESTAMOS EN REGLAS */}
                   {!isRulesSection && (
                     <div className="flex items-center gap-3 mb-6 pb-2 border-b border-white/5">
                       {SectionIcon && <SectionIcon className="text-hytale-gold" size={24} />}
@@ -267,23 +256,23 @@ function Wiki() {
                     </div>
                   )}
 
-                  {/* CAMBIO: Contenedor plano para reglas para evitar saltos de borde */}
                   <div className={isRulesSection ? "contents" : "space-y-2"}>
-                    {section.items.map((item, i) => (
-                      <RuleItem 
-                        key={i} 
-                        item={item} 
-                        targetItemId={targetItemId} 
-                      />
-                    ))}
+                    {section.items.map((item, i) => {
+                      const itemId = generateId(item.name);
+                      return (
+                        <RuleItem 
+                          key={i} 
+                          item={item} 
+                          isOpen={expandedRuleId === itemId}
+                          onToggle={() => setExpandedRuleId(prev => prev === itemId ? null : itemId)}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               ); 
             })}
           </div>
-
-          {/* Un div invisible al final para asegurar que el último borde no se vea raro si fuera necesario, 
-              o simplemente dejamos que el último RuleItem tenga borde (no pasa nada) */}
           
           <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">
             {prevCat ? (
@@ -357,7 +346,8 @@ function Wiki() {
             <div
               key={`${result.categoryId}-${result.itemId}`}
               onClick={() => handleSearchResultClick(result.categoryId, result.itemId)}
-              className="flex items-start gap-4 p-5 bg-black/40 backdrop-blur-md border border-white/10 hover:border-hytale-gold/50 rounded-xl cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg group"
+              // CAMBIO: También aplicamos el degradado aquí para consistencia
+              className="flex items-start gap-4 p-5 bg-gradient-to-br from-[#1e2235] to-[#121420] border border-white/10 hover:border-hytale-gold/50 rounded-xl cursor-pointer transition-all hover:-translate-y-1 shadow-md group"
             >
               <div className="p-3 bg-hytale-gold/10 rounded-lg text-hytale-gold group-hover:text-white transition-colors">
                 <result.icon size={24} />
@@ -391,7 +381,8 @@ function Wiki() {
         <div
           key={category.id}
           onClick={() => setSelectedCategory(category.id)}
-          className="group bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-5 md:p-6 hover:bg-white/5 hover:border-hytale-gold/50 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(205,176,117,0.1)] hover:-translate-y-1 h-full"
+          // CAMBIO: Degradado sutil (from-[#1e2235] to-[#121420]) + hover más claro
+          className="group bg-gradient-to-br from-[#1e2235] to-[#121420] border border-white/5 rounded-xl p-5 md:p-6 hover:from-[#252a40] hover:to-[#1a1d2d] hover:border-hytale-gold/40 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl hover:-translate-y-1 h-full"
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-hytale-gold/10 rounded-lg group-hover:bg-hytale-gold/20 transition-colors">
