@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, ArrowRight, AlertTriangle, AlertOctagon, Info, Clock, FileText } from 'lucide-react';
+import { 
+  Book, Shield, Terminal, HelpCircle, Map, Sword, Search, ArrowLeft, ArrowRight, 
+  AlertTriangle, AlertOctagon, Info, Clock, FileText, ChevronDown 
+} from 'lucide-react';
 import { wikiContent } from '../data/wiki-data';
 
 // --- CONFIGURACIÓN Y ESTILOS ---
@@ -13,20 +16,97 @@ const wikiCategories = [
   { id: 'items', title: 'Items Especiales', icon: Book, description: 'Guía de objetos únicos y crafteos.' },
 ];
 
-const SeverityIcon = ({ severity }) => {
-  if (severity === 'high') return <AlertOctagon className="text-red-500" size={24} />;
-  if (severity === 'medium') return <AlertTriangle className="text-orange-400" size={24} />;
-  return <Info className="text-blue-400" size={24} />;
-};
-
-const getSeverityStyles = (severity) => {
-  if (severity === 'high') return "border-l-red-600 shadow-[inset_10px_0_20px_-10px_rgba(220,38,38,0.1)]"; 
-  if (severity === 'medium') return "border-l-orange-500 shadow-[inset_10px_0_20px_-10px_rgba(249,115,22,0.1)]";
-  return "border-l-blue-500 shadow-[inset_10px_0_20px_-10px_rgba(59,130,246,0.1)]"; 
-};
-
 const generateId = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
+// --- COMPONENTE DE REGLA DESPLEGABLE (Accordion) ---
+const RuleItem = ({ item, targetItemId }) => {
+  const itemId = generateId(item.name);
+  
+  // LÓGICA DE APERTURA:
+  // 1. Si se buscó específicamente este item (targetItemId), se abre.
+  // 2. Si estamos en PC (ancho > 768px), se abre por defecto.
+  // 3. En móvil, empieza cerrado.
+  const [isOpen, setIsOpen] = useState(() => {
+    if (targetItemId === itemId) return true;
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; // PC: true, Móvil: false
+    }
+    return false;
+  });
+
+  return (
+    <div 
+      id={itemId}
+      // Quitamos 'last:border-0' aquí para manejarlo desde el contenedor padre si es necesario, 
+      // pero para asegurar líneas en todo, dejamos border-b siempre y el padre corta el último.
+      className={`group border-b border-white/5 transition-colors duration-300
+        ${isOpen ? 'bg-white/5 rounded-lg border-transparent' : 'hover:bg-white/5 hover:rounded-lg'}
+      `}
+    >
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 text-left focus:outline-none"
+      >
+        <div className="flex items-center gap-3 pr-4">
+          {/* CAMBIO: Color unificado (text-hytale-gold) para todos los títulos */}
+          <span className="text-base md:text-xl font-serif font-bold tracking-wide text-hytale-gold">
+            {item.name}
+          </span>
+        </div>
+
+        <div className={`text-hytale-gold/50 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+          <ChevronDown size={20} />
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 pt-0 text-sm md:text-base">
+              
+              {/* BADGES DE SEVERIDAD (Dentro del contenido) */}
+              {item.severity === 'high' && (
+                <div className="mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-1 rounded border border-red-500/20 tracking-wider">
+                        <AlertOctagon size={12} />
+                        Infracción Crítica
+                    </span>
+                </div>
+              )}
+              {item.severity === 'medium' && (
+                <div className="mb-3">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase bg-orange-500/10 text-orange-400 px-2 py-1 rounded border border-orange-500/20 tracking-wider">
+                        <AlertTriangle size={12} />
+                        Infracción Media
+                    </span>
+                </div>
+              )}
+
+              <p className="text-hytale-text/80 leading-relaxed font-sans mb-3 pl-2 border-l-2 border-white/10">
+                {item.desc}
+              </p>
+
+              {item.sanction && (
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 bg-black/20 p-2 rounded text-xs md:text-sm font-mono text-red-300/90">
+                  <span className="uppercase font-bold text-hytale-text/30 tracking-wider">Consecuencia:</span>
+                  <span>{item.sanction}</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// --- COMPONENTE PRINCIPAL WIKI ---
 function Wiki() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -152,6 +232,8 @@ function Wiki() {
     const currentIndex = wikiCategories.findIndex(c => c.id === selectedCategory);
     const prevCat = currentIndex > 0 ? wikiCategories[currentIndex - 1] : null;
     const nextCat = currentIndex < wikiCategories.length - 1 ? wikiCategories[currentIndex + 1] : null;
+    
+    const isRulesSection = selectedCategory === 'rules';
 
     return (
     <div className="max-w-5xl mx-auto w-full relative">
@@ -172,66 +254,37 @@ function Wiki() {
             {activeContent.description}
           </p>
 
-          <div className="space-y-16">
+          <div className={isRulesSection ? "space-y-0" : "space-y-16"}>
             {activeContent.sections.map((section, idx) => {
               const SectionIcon = section.icon;
               return (
-                <div key={idx}>
-                  <div className="flex items-center gap-3 mb-6 pb-2 border-b border-white/5">
-                    {SectionIcon && <SectionIcon className="text-hytale-gold" size={24} />}
-                    <h3 className="text-2xl font-serif text-hytale-gold">{section.title}</h3>
+                <div key={idx} className={isRulesSection ? "contents" : "block"}>
+                  {/* OCULTAMOS EL HEADER DE SECCIÓN SOLO SI ESTAMOS EN REGLAS */}
+                  {!isRulesSection && (
+                    <div className="flex items-center gap-3 mb-6 pb-2 border-b border-white/5">
+                      {SectionIcon && <SectionIcon className="text-hytale-gold" size={24} />}
+                      <h3 className="text-2xl font-serif text-hytale-gold">{section.title}</h3>
+                    </div>
+                  )}
+
+                  {/* CAMBIO: Contenedor plano para reglas para evitar saltos de borde */}
+                  <div className={isRulesSection ? "contents" : "space-y-2"}>
+                    {section.items.map((item, i) => (
+                      <RuleItem 
+                        key={i} 
+                        item={item} 
+                        targetItemId={targetItemId} 
+                      />
+                    ))}
                   </div>
-
-                  <div className="divide-y divide-white/5">
-                    {section.items.map((item, i) => {
-                      const itemId = generateId(item.name);
-                      const isTarget = targetItemId === itemId;
-                      
-                      let titleColor = "text-hytale-gold";
-                      if (item.severity === 'high') titleColor = "text-red-400";
-                      else if (item.severity === 'medium') titleColor = "text-orange-400";
-
-                      return (
-                        <div
-                          key={i}
-                          id={itemId}
-                          className={`group py-8 transition-all duration-500
-                            ${isTarget ? 'bg-hytale-gold/5 -mx-4 px-4 rounded-lg' : ''}
-                          `}
-                        >
-                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-12">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <h4 className={`text-lg md:text-xl font-serif font-bold tracking-wide ${titleColor}`}>
-                                      {item.name}
-                                  </h4>
-                                  {item.severity === 'high' && (
-                                    <span className="text-[10px] font-bold uppercase bg-red-500/10 text-red-400 px-2 py-0.5 rounded border border-red-500/20 tracking-wider">
-                                      Critico
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-hytale-text/80 text-sm md:text-base leading-relaxed font-sans">
-                                    {item.desc}
-                                </p>
-                            </div>
-                            {item.sanction && (
-                                <div className="mt-2 md:mt-1 md:text-right min-w-[200px]">
-                                    <span className="block text-[10px] font-bold uppercase tracking-widest text-hytale-text/30 mb-1">Consecuencia</span>
-                                    <p className="text-sm font-mono text-red-300/90">
-                                        {item.sanction}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                      </div>
-                    );
-                  })}
                 </div>
-              </div>
-            ); })}
+              ); 
+            })}
           </div>
 
+          {/* Un div invisible al final para asegurar que el último borde no se vea raro si fuera necesario, 
+              o simplemente dejamos que el último RuleItem tenga borde (no pasa nada) */}
+          
           <div className="flex flex-col md:flex-row justify-between gap-4 mt-16 pt-8 border-t border-white/10">
             {prevCat ? (
                 <button 
@@ -358,11 +411,7 @@ function Wiki() {
 
   return (
     <section className="container mx-auto px-4 pt-36 pb-16 relative z-10 min-h-screen flex flex-col">
-      
-      {/* NUEVO FONDO: Sólido Púrpura Oscuro / Azulado (Cubre las estrellas de la App) */}
       <div className="fixed inset-0 z-[-20] bg-gradient-to-b from-[#121420] via-[#0d0f1a] to-[#050508]"></div>
-      
-      {/* Overlay opcional para dar un tinte más 'Wiki' si es necesario, o quitar si quieres solo sólido */}
       <div className="fixed inset-0 z-[-15] bg-[#0f0c29] opacity-30 pointer-events-none"></div>
 
       {renderHeader()}
