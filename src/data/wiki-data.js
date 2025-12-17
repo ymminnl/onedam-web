@@ -1,7 +1,7 @@
 import { 
   Shield, AlertTriangle, MessageSquare, Gavel, Swords, 
   Terminal, Home, Map, Users, DollarSign, Box, Music, 
-  Gamepad2, Smile, Crown, ShoppingBag, Lock, Settings, Flag
+  Gamepad2, Smile, Crown, ShoppingBag, Lock, Settings, Flag, Star
 } from 'lucide-react';
 
 export const wikiContent = {
@@ -116,94 +116,128 @@ export const wikiContent = {
     ]
   },
 
-  // --- SECCIÓN DE COMANDOS ---
+  // --- SECCIÓN DE COMANDOS (ACTUALIZADA Y DETALLADA) ---
   commands: {
     title: "Comandos del Servidor",
-    // DESCRIPCIÓN ACTUALIZADA:
-    description: "Consulta la lista definitiva de comandos para dominar todas las mecánicas del servidor.",
+    description: "Manual de uso. Los argumentos entre < > son obligatorios y los [ ] son opcionales.",
     lastUpdated: "Actualizado recientemente",
     sections: [
       {
-        title: "Protecciones: Gestión Básica",
+        title: "Hogares y Teletransporte",
+        icon: Map,
+        items: [
+          { name: "/sethome <nombre>", desc: "Guarda tu ubicación actual como un hogar." },
+          { name: "/delhome <nombre>", desc: "Elimina un hogar que ya no uses." },
+          { name: "/home [nombre]", desc: "Te teletransporta a tu hogar. Si no pones nombre, te lleva al principal." },
+          { name: "/homes", desc: "Abre una lista gráfica o texto con todos tus hogares guardados." },
+          { name: "/renamehome <viejo> <nuevo>", desc: "Cambia el nombre de uno de tus hogares." },
+          { name: "/tpa <jugador>", desc: "Envía una solicitud para teletransportarte hacia otro jugador." },
+          { name: "/tpaccept", desc: "Acepta la solicitud de teletransporte que recibiste." },
+          { name: "/spawn", desc: "Te lleva al punto de aparición central del servidor." },
+          { name: "/warps", desc: "Abre el menú de viajes rápidos (zonas públicas, biomas, etc)." },
+          { name: "/warp <nombre>", desc: "Te lleva directamente a un warp específico." },
+          { name: "/arena", desc: "Te teletransporta a la zona de combate (PvP)." }
+        ]
+      },
+      {
+        title: "Protecciones (PS): Gestión",
         icon: Shield,
         items: [
-          { name: "/ps ayuda", desc: "Muestra la lista de ayuda dentro del juego." },
-          { name: "/ps info", desc: "Muestra información detallada del terreno donde estás parado." },
-          { name: "/ps lista", desc: "Abre una lista con todos tus terrenos protegidos." },
-          { name: "/ps home [nombre]", desc: "Te teletransporta a uno de tus terrenos." },
-          { name: "/ps sethome", desc: "Establece el punto exacto de aparición (home) en tu terreno." },
-          { name: "/ps unclaim", desc: "Quita la protección donde estás parado y te devuelve el bloque al inventario." },
-          { name: "/ps renombrar [nombre]", desc: "Cambia el nombre de tu terreno para identificarlo mejor." },
-          { name: "/ps ver (o mostrarlimites)", desc: "Muestra visualmente los bordes de tu protección con partículas." },
-          { name: "/ps ocultar", desc: "Oculta el bloque de protección (la piedra) visualmente." },
-          { name: "/ps mostrarbloque", desc: "Vuelve a mostrar el bloque de protección si estaba oculto." },
-          { name: "/ps tienda", desc: "Abre el menú para comprar nuevos bloques de protección o terrenos." },
-          { name: "/ps comprar", desc: "Compra el terreno en el que estás (si está en venta)." },
-          { name: "/ps vender [precio]", desc: "Pone tu terreno actual a la venta por el precio que elijas." }
+          { name: "/ps", desc: "Muestra el menú de ayuda de Protection Stones (alias: /terrenos)." },
+          { name: "/ps info", desc: "Muestra detalles del terreno actual (dueño, miembros, tamaño)." },
+          { name: "/ps lista", desc: "Lista todos los terrenos que tienes protegidos." },
+          { name: "/ps home [id]", desc: "Te teletransporta a uno de tus terrenos." },
+          { name: "/ps sethome", desc: "Fija el punto de aparición donde aparecerás al usar /ps home." },
+          { name: "/ps unclaim", desc: "Elimina la protección actual y te devuelve el bloque al inventario." },
+          { name: "/ps renombrar <nombre>", desc: "Asigna un nombre personalizado a tu terreno." },
+          { name: "/ps ver", desc: "Muestra visualmente los bordes de tu protección con partículas." },
+          { name: "/ps ocultar", desc: "Oculta el bloque de protección para que no se vea." },
+          { name: "/ps mostrarbloque", desc: "Vuelve a hacer visible el bloque de protección." },
+          { name: "/ps juntar", desc: "Fusiona la protección actual con otra adyacente que sea tuya." },
+          { name: "/ps dividir", desc: "Separa terrenos que hayan sido fusionados previamente." },
+          { name: "/ps prioridad <nivel>", desc: "Cambia la prioridad de carga del terreno." }
         ]
       },
       {
-        title: "Protecciones: Miembros y Ajustes",
-        icon: Settings,
-        items: [
-          { name: "/ps agregarmiembro [jugador]", desc: "Permite a un amigo construir y abrir cofres en tu terreno." },
-          { name: "/ps eliminarmiembro [jugador]", desc: "Quita los permisos de miembro a un jugador." },
-          { name: "/ps agregardueño [jugador]", desc: "Le das rango de Dueño a otro jugador (¡Cuidado, tendrá control total!)." },
-          { name: "/ps eliminardueño [jugador]", desc: "Le quitas el rango de dueño a alguien." },
-          { name: "/ps expulsar [jugador]", desc: "Saca a un jugador de tu terreno inmediatamente." },
-          { name: "/ps banear [jugador]", desc: "Prohíbe la entrada de un jugador a tu terreno." },
-          { name: "/ps desban [jugador]", desc: "Permite entrar de nuevo a un jugador baneado." },
-          { name: "/ps salir", desc: "Abandonas un terreno del que eres miembro o dueño." },
-          { name: "/ps permisos", desc: "Abre el menú avanzado para editar qué pueden hacer los visitantes." },
-          { name: "/ps ajustesterreno", desc: "Configura opciones generales del terreno." },
-          { name: "/ps fly", desc: "Activa/Desactiva el vuelo dentro de tu propio terreno." },
-          { name: "/ps publico", desc: "Hace que tu terreno sea público (cualquiera puede visitarlo)." },
-          { name: "/ps privado", desc: "Hace que tu terreno sea privado (solo miembros)." },
-          { name: "/ps juntar", desc: "Fusiona este terreno con otro adyacente." }
-        ]
-      },
-      {
-        title: "Clanes: Gestión y Guerra",
-        icon: Flag,
-        items: [
-          { name: "/clan help", desc: "Muestra la ayuda general de clanes." },
-          { name: "/clan create [tag] [nombre]", desc: "Crea tu propio clan (Costo: 100). El 'tag' es el nombre corto (Ej: ONE)." },
-          { name: "/clan invite [jugador]", desc: "Invita a un jugador a unirse a tu clan." },
-          { name: "/clan join [tag]", desc: "Acepta una invitación o únete a un clan abierto." },
-          { name: "/clan home", desc: "Te teletransporta a la base del clan." },
-          { name: "/clan home create", desc: "Establece la ubicación actual como base del clan." },
-          { name: "/clan chat", desc: "Alterna el chat para hablar solo con los miembros del clan." },
-          { name: "/clan info", desc: "Muestra información detallada de tu clan o de otro." },
-          { name: "/clan list", desc: "Muestra la lista de todos los clanes del servidor." },
-          { name: "/clan rival add [clan]", desc: "Declara la guerra a otro clan (Rivales)." },
-          { name: "/clan ally add [clan]", desc: "Envía una solicitud de alianza a otro clan." },
-          { name: "/clan ff", desc: "Activa o desactiva el fuego amigo (daño entre miembros)." },
-          { name: "/clan promote [jugador]", desc: "Asciende a un miembro de rango." },
-          { name: "/clan demote [jugador]", desc: "Desciende a un miembro de rango." },
-          { name: "/clan kick [jugador]", desc: "Expulsa a un miembro del clan." },
-          { name: "/clan disband", desc: "Disuelve (elimina) el clan permanentemente." },
-          { name: "/clan profile", desc: "Abre tu perfil de jugador dentro del sistema de clanes." },
-          { name: "/clan banner", desc: "Abre el editor para crear o cambiar el estandarte del clan." },
-          { name: "/clan discord", desc: "Vincula o muestra el Discord del clan." }
-        ]
-      },
-      {
-        title: "Social y Utilidad",
+        title: "Protecciones (PS): Miembros y Venta",
         icon: Users,
         items: [
-          { name: "/msg [jugador]", desc: "Envía un mensaje privado (susurro)." },
-          { name: "/r [mensaje]", desc: "Responde rápidamente al último mensaje privado recibido." },
-          { name: "/tpa [jugador]", desc: "Solicita teletransportarte a un amigo." },
-          { name: "/tpaccept", desc: "Acepta una solicitud de TP." },
-          { name: "/sethome [nombre]", desc: "Guarda tu ubicación actual como un hogar." },
-          { name: "/home [nombre]", desc: "Viaja a tus hogares guardados." },
-          { name: "/spawn", desc: "Vuelve al lobby principal." },
-          { name: "/warps", desc: "Menú de viajes a biomas y zonas públicas." },
-          { name: "/balance", desc: "Mira tu dinero actual." },
-          { name: "/pay [jugador] [cantidad]", desc: "Envía dinero a otro usuario." },
-          { name: "/donjhanzm", desc: "Menú de venta de items para conseguir dinero." },
-          { name: "/personalizacion", desc: "Menú de cosméticos y efectos visuales." },
-          { name: "/musica", desc: "Reproductor de música del servidor." }
+          { name: "/ps agregarmiembro <jugador>", desc: "Permite al jugador construir e interactuar en tu terreno." },
+          { name: "/ps eliminarmiembro <jugador>", desc: "Revoca los permisos de miembro a un jugador." },
+          { name: "/ps agregardueño <jugador>", desc: "Hace al jugador co-propietario (Cuidado: tiene control total)." },
+          { name: "/ps eliminardueño <jugador>", desc: "Le quita el rango de dueño al jugador." },
+          { name: "/ps banear <jugador>", desc: "Prohíbe la entrada de un jugador a tu terreno." },
+          { name: "/ps desban <jugador>", desc: "Permite entrar nuevamente a un jugador baneado." },
+          { name: "/ps expulsar <jugador>", desc: "Saca a un jugador que esté dentro de tu terreno ahora mismo." },
+          { name: "/ps permisos", desc: "Abre un menú para ajustar banderas y permisos específicos." },
+          { name: "/ps fly", desc: "Activa o desactiva el vuelo dentro de tu protección." },
+          { name: "/ps publico", desc: "Hace que cualquiera pueda entrar a tu terreno." },
+          { name: "/ps privado", desc: "Restringe la entrada solo a miembros y dueños." },
+          { name: "/ps vender <precio>", desc: "Pone el terreno a la venta por el precio especificado." },
+          { name: "/ps comprar", desc: "Compra el terreno en el que estás parado (si está en venta)." },
+          { name: "/ps transferir <jugador>", desc: "Regala/Transfiere la propiedad del terreno a otro jugador." }
+        ]
+      },
+      {
+        title: "Economía y Tiendas",
+        icon: DollarSign,
+        items: [
+          { name: "/balance", desc: "Muestra cuánto dinero tienes en tu cuenta." },
+          { name: "/balancetop", desc: "Muestra la lista de los jugadores más ricos del servidor." },
+          { name: "/pay <jugador> <cantidad>", desc: "Envía dinero de tu saldo a otro jugador." },
+          { name: "/kami", desc: "Abre la tienda principal para comprar protecciones y mejoras." },
+          { name: "/donjhanzm", desc: "Abre el menú para vender tus items y conseguir dinero." },
+          { name: "/comerciante", desc: "Abre el menú de comercio general o te lleva al NPC." }
+        ]
+      },
+      {
+        title: "Clanes: Creación y Gestión",
+        icon: Flag,
+        items: [
+          { name: "/clan create <tag> <nombre>", desc: "Crea un clan nuevo (Costo: 100). Tag = Nombre corto." },
+          { name: "/clan disband", desc: "Disuelve tu clan y lo elimina para siempre." },
+          { name: "/clan invite <jugador>", desc: "Invita a alguien a unirse a tu clan." },
+          { name: "/clan join <tag>", desc: "Acepta una invitación o únete a un clan público." },
+          { name: "/clan leave", desc: "Abandona el clan en el que estás actualmente." },
+          { name: "/clan kick <jugador>", desc: "Expulsa a un miembro de tu clan." },
+          { name: "/clan promote <jugador>", desc: "Sube de rango a un miembro." },
+          { name: "/clan demote <jugador>", desc: "Baja de rango a un miembro." },
+          { name: "/clan home", desc: "Te teletransporta a la base del clan." },
+          { name: "/clan setbase", desc: "Define la ubicación actual como base del clan." },
+          { name: "/clan list", desc: "Muestra una lista de todos los clanes existentes." },
+          { name: "/clan info [tag]", desc: "Muestra información detallada de tu clan o de otro." },
+          { name: "/clan profile", desc: "Muestra tu perfil personal y estadísticas dentro del clan." },
+          { name: "/clan chat", desc: "Cambia el modo de chat para hablar solo con tu clan." }
+        ]
+      },
+      {
+        title: "Clanes: Guerra y Extras",
+        icon: Swords,
+        items: [
+          { name: "/clan rival add <tag>", desc: "Declara la guerra a otro clan." },
+          { name: "/clan rival remove <tag>", desc: "Propone paz o retira la rivalidad." },
+          { name: "/clan ally add <tag>", desc: "Propone una alianza con otro clan." },
+          { name: "/clan ff", desc: "Activa/Desactiva el fuego amigo (dañarse entre miembros)." },
+          { name: "/clan banner", desc: "Abre el editor para crear la bandera de tu clan." },
+          { name: "/clan discord", desc: "Muestra el enlace de Discord del clan." },
+          { name: "/clan bank deposit <monto>", desc: "Deposita dinero en el banco del clan." },
+          { name: "/clan bank withdraw <monto>", desc: "Retira dinero del banco del clan." },
+          { name: "/clan level", desc: "Muestra el nivel del clan y requisitos para subir." }
+        ]
+      },
+      {
+        title: "Social, Utilidad y Otros",
+        icon: Smile,
+        items: [
+          { name: "/msg <jugador> <mensaje>", desc: "Envía un mensaje privado (susurro)." },
+          { name: "/tell <jugador> <mensaje>", desc: "Alias de /msg." },
+          { name: "/r <mensaje>", desc: "Responde rápidamente al último susurro recibido." },
+          { name: "/help", desc: "Muestra la ayuda general del servidor." },
+          { name: "/ranktags", desc: "Abre el menú para seleccionar tu etiqueta de rango." },
+          { name: "/playingtime", desc: "Consulta tu tiempo total jugado en el servidor." },
+          { name: "/personalizacion", desc: "Abre el menú de cosméticos, partículas y efectos." },
+          { name: "/musica", desc: "Abre el reproductor de música del servidor." },
+          { name: "/evento", desc: "Te une al evento que esté activo en ese momento." }
         ]
       }
     ]
