@@ -275,7 +275,7 @@ function Wiki() {
             })}
           </div>
           
-          <div className="flex flex-col md:flex-row justify-between gap-4 mt-8">
+          <div className="flex flex-row justify-between items-center gap-2 mt-8">
             {prevCat ? (
                 <button 
                     onClick={() => setSelectedCategory(prevCat.id)}
